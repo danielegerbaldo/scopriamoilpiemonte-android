@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="20dp"
+    android:background="#2D00BCD4"
+    android:id="@+id/item_body">
+
+    <TextView
+        android:id="@+id/comune"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="*comune*"
+        app:layout_constraintBottom_toBottomOf="@+id/comune_text"
+        app:layout_constraintStart_toEndOf="@+id/comune_text" />
+
+    <TextView
+        android:id="@+id/comune_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Comune:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/nome_evento_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Nome evento:"
+        app:layout_constraintStart_toStartOf="@+id/comune_text"
+        app:layout_constraintTop_toBottomOf="@+id/comune" />
+
+    <TextView
+        android:id="@+id/nome_evento"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="*nome evento*"
+        app:layout_constraintBottom_toBottomOf="@+id/nome_evento_text"
+        app:layout_constraintStart_toEndOf="@+id/nome_evento_text" />
+
+    <TextView
+        android:id="@+id/data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="*data*"
+        app:layout_constraintStart_toEndOf="@+id/data_text"
+        app:layout_constraintTop_toTopOf="@+id/data_text" />
+
+    <TextView
+        android:id="@+id/data_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Data:"
+        app:layout_constraintStart_toStartOf="@+id/nome_evento_text"
+        app:layout_constraintTop_toBottomOf="@+id/nome_evento" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/extra_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/data_text">
+
+        <Button
+            android:id="@+id/button_mod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:text="Modificatore"
+            app:backgroundTint="#FFC107"
+            app:layout_constraintEnd_toStartOf="@+id/button_pos"
+            app:layout_constraintTop_toTopOf="@+id/button_pos" />
+
+        <TextView
+            android:id="@+id/partecipanti"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:text="*partecipanti*"
+            app:layout_constraintStart_toEndOf="@+id/partecipanti_text"
+            app:layout_constraintTop_toTopOf="@+id/partecipanti_text" />
+
+        <TextView
+            android:id="@+id/descrizione"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:maxWidth="200dp"
+            android:maxLines="5"
+            android:text="*descrizione*"
+            app:layout_constraintStart_toEndOf="@+id/descrizione_text"
+            app:layout_constraintTop_toTopOf="@+id/descrizione_text" />
+
+        <TextView
+            android:id="@+id/note_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:maxWidth="200dp"
+            android:maxLines="5"
+            android:text="Note:"
+            app:layout_constraintStart_toStartOf="@+id/descrizione_text"
+            app:layout_constraintTop_toBottomOf="@+id/descrizione" />
+
+        <TextView
+            android:id="@+id/note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="200dp"
+            android:maxLines="5"
+            android:text="*note*"
+            app:layout_constraintStart_toStartOf="@+id/descrizione"
+            app:layout_constraintTop_toTopOf="@+id/note_text" />
+
+        <TextView
+            android:id="@+id/partecipanti_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Partecipanti:"
+            app:layout_constraintStart_toStartOf="@+id/note_text"
+            app:layout_constraintTop_toBottomOf="@+id/note" />
+
+        <TextView
+            android:id="@+id/indirizzo_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Indirizzo:"
+            app:layout_constraintStart_toStartOf="@+id/partecipanti_text"
+            app:layout_constraintTop_toBottomOf="@+id/partecipanti" />
+
+        <TextView
+            android:id="@+id/indirizzo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:text="Indirizzo"
+            app:layout_constraintStart_toEndOf="@+id/indirizzo_text"
+            app:layout_constraintTop_toTopOf="@+id/indirizzo_text" />
+
+        <Button
+            android:id="@+id/button_pos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:text="Positivo"
+            app:layout_constraintEnd_toStartOf="@+id/button_neg"
+            app:layout_constraintTop_toTopOf="@+id/button_neg" />
+
+        <TextView
+            android:id="@+id/id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:text="*id*"
+            android:textColor="@color/cardview_light_background"
+            android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_neg" />
+
+        <Button
+            android:id="@+id/button_neg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:text="Negativo"
+            app:backgroundTint="#E81010"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/streaming" />
+
+        <TextView
+            android:id="@+id/streaming"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:text="*si/no*"
+            app:layout_constraintStart_toEndOf="@+id/streaming_text"
+            app:layout_constraintTop_toTopOf="@+id/streaming_text" />
+
+        <TextView
+            android:id="@+id/descrizione_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Descrizione:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/streaming_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Streaming:"
+            app:layout_constraintStart_toStartOf="@+id/indirizzo_text"
+            app:layout_constraintTop_toBottomOf="@+id/indirizzo" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
