@@ -20,7 +20,10 @@ import android.widget.TableLayout;
 import android.widget.Toast;
 
 import com.example.guitaass.R;
+import com.example.guitaass.sindaco.fragmentComuniSeguiti.SindacoComuniSeguiti;
+import com.example.guitaass.sindaco.fragmentEventi.SindacoEventi;
 import com.example.guitaass.sindaco.fragmentIscrizioni.SindacoIscrizioni;
+import com.example.guitaass.sindaco.fragmentMappa.SindacoMappa;
 import com.example.guitaass.sindaco.fragmentMioComune.SindacoMioComune;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -74,6 +77,27 @@ public class SindacoHome extends AppCompatActivity {
                         fragmentTransaction.replace(R.id.fragment, fragment, "MioComune").addToBackStack(null).commit();
                         //Toast.makeText(context, "mio comune", Toast.LENGTH_SHORT).show();
                         break;
+                    }
+
+                    case 2:{
+                        FragmentManager fragmentManager = getFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        SindacoComuniSeguiti fragment = new SindacoComuniSeguiti();
+                        fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();
+                    }
+
+                    case 3:{
+                        FragmentManager fragmentManager = getFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        SindacoEventi fragment = new SindacoEventi();
+                        fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();
+                    }
+
+                    case 4:{
+                        FragmentManager fragmentManager = getFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        SindacoMappa fragment = new SindacoMappa();
+                        fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();
                     }
                 }
             }
