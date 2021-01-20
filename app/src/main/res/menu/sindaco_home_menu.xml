@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/iscrizioni_eventi"
+        android:title="Iscrizioni eventi" />
+    <item
+        android:id="@+id/mio_comune"
+        android:title="Il mio comune" />
+    <item
+        android:id="@+id/iscrizioni_comuni"
+        android:title="Iscrizioni comuni" />
+    <item
+        android:id="@+id/tutti_eventi"
+        android:title="Tutti gli eventi" />
+    <item
+        android:id="@+id/naviga"
+        android:title="Naviga" />
+    <item
+        android:id="@+id/impostazioni"
+        android:title="Impostazioni" />
+    <item
+        android:id="@+id/esci"
+        android:title="Esci" />
+</menu>

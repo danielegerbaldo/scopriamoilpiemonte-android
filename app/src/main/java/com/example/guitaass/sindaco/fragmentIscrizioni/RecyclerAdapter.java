@@ -37,7 +37,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_list_evento_item, parent, false);
         ViewHolder holder = new ViewHolder(view);
-        Toast.makeText(view.getContext(), "num. eventi = " + eventi.size(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(view.getContext(), "num. eventi = " + eventi.size(), Toast.LENGTH_SHORT).show();
         return holder;
     }
 
