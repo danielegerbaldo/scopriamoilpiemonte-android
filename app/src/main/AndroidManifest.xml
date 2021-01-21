@@ -9,7 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GUITAASS">
-        <activity android:name=".sindaco.home.SindacoHome"></activity>
+        <activity android:name=".sindaco.home.SindacoAiuto"
+            android:parentActivityName=".sindaco.home.SindacoHome"></activity>
+        <activity android:name=".sindaco.home.SindacoHome" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -3,31 +3,23 @@ package com.example.guitaass.sindaco.home;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Debug;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
-import android.widget.AdapterView;
-import android.widget.Spinner;
-import android.widget.TableLayout;
-import android.widget.Toast;
 
 import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.R;
 import com.example.guitaass.condivisi.fragmentEventi.FragmentEventi;
 import com.example.guitaass.sindaco.fragmentComuniSeguiti.SindacoComuniSeguiti;
 import com.example.guitaass.sindaco.fragmentEventi.SindacoEventi;
-import com.example.guitaass.sindaco.fragmentIscrizioni.SindacoIscrizioni;
 import com.example.guitaass.sindaco.fragmentMappa.SindacoMappa;
 import com.example.guitaass.sindaco.fragmentMioComune.SindacoMioComune;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -120,7 +112,26 @@ public class SindacoHome extends AppCompatActivity {
 
     }
 
-    private List<Evento> fakeRecyclerFill(){
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.sindaco_home_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.aiuto:{
+                Intent intent = new Intent(getBaseContext(), SindacoAiuto.class);
+                startActivity(intent);
+                break;
+            }
+        }
+        return true;
+    }
+
+        private List<Evento> fakeRecyclerFill(){
         List<Evento> list = new ArrayList<>();
         list.add(new Evento((long)1, "prova", 10, 2,
                 true, "evento di prova fake per verificare il corretto funzionamento dell'app",
