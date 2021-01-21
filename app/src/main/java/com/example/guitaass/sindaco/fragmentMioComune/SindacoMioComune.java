@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.example.guitaass.DOM.Evento;
+import com.example.guitaass.DOM.Utente;
 import com.example.guitaass.R;
 import com.example.guitaass.condivisi.fragmentEventi.FragmentEventi;
 import com.example.guitaass.sindaco.fragmentMioComune.fragmentElencoPersone.FragmentElencoPersone;
@@ -83,7 +84,7 @@ public class SindacoMioComune extends Fragment {
                     case 1:{    //personale
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        FragmentElencoPersone fragment = new FragmentElencoPersone();
+                        FragmentElencoPersone fragment = new FragmentElencoPersone(fakeUtenteRecyclerFill1());
                         fragmentTransaction.replace(R.id.fragment2, fragment, "Personale").addToBackStack(null).commit();
                         break;
                     }
@@ -135,6 +136,14 @@ public class SindacoMioComune extends Fragment {
         list.add(new Evento((long)2, "prova evento mio comune2", 100, 2,
                 false, "evento tipico di Milanere, sono svariate le edizioni di questo evento che ricorre da più di 50 anni dove i protagonisti sono sempre stati: produttori locali, bande e scuole. Punto di forza? Le ciule ripiene e le frittelle di mele!!!!",
                 "non adatto a chi non gradisce i prodotti piemontesi, neh?!", null, null, 2, 2));
+        return list;
+    }
+    
+    private List<Utente> fakeUtenteRecyclerFill1(){
+        List<Utente> list = new ArrayList<>();
+        list.add(new Utente(1, "Mario", "Rossi", "Co-Pubblicatore"));
+        list.add(new Utente(2, "Alessia", "Bianchi", "Co-Pubblicatore"));
+        list.add(new Utente(3, "Carlo", "Martello", "Staff"));
         return list;
     }
 

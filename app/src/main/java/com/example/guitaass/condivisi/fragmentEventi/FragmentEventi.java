@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.R;
-import com.example.guitaass.sindaco.fragmentIscrizioni.RecyclerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
