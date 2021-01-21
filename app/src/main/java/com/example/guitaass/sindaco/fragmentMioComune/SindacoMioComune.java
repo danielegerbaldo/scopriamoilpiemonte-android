@@ -20,6 +20,9 @@ import androidx.annotation.RequiresApi;
 import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.R;
 import com.example.guitaass.condivisi.fragmentEventi.FragmentEventi;
+import com.example.guitaass.sindaco.fragmentMioComune.fragmentElencoPersone.FragmentElencoPersone;
+import com.example.guitaass.sindaco.fragmentMioComune.fragmentInfo.FragmentInfo;
+import com.example.guitaass.sindaco.fragmentMioComune.fragmentSegnalazioni.FragmentSegnalazioni;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -60,14 +63,56 @@ public class SindacoMioComune extends Fragment {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill());
-        fragmentTransaction.replace(R.id.fragment2, fragment, "Iscrizioni").addToBackStack(null).commit();
+        fragmentTransaction.replace(R.id.fragment2, fragment, "EventiComune").addToBackStack(null).commit();
 
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                //Toast.makeText(context, "Hai selezionato: " + tab.getPosition(), Toast.LENGTH_SHORT).show();
-                //Log.d("FragmentMioComune", "***********tabSelected = " + tab.getPosition());
+                int selezionato = tab.getPosition();
+                //Toast.makeText(context, "tab " + selezionato, Toast.LENGTH_SHORT).show();
+                switch (selezionato){
+                    case 0:{    //eventi
+                        FragmentManager fragmentManager = getFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill());
+                        fragmentTransaction.replace(R.id.fragment2, fragment, "EventiComune").addToBackStack(null).commit();
+                        break;
+                    }
+
+                    case 1:{    //personale
+                        FragmentManager fragmentManager = getFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        FragmentElencoPersone fragment = new FragmentElencoPersone();
+                        fragmentTransaction.replace(R.id.fragment2, fragment, "Personale").addToBackStack(null).commit();
+                        break;
+                    }
+
+                    case 2:{    //info
+                        FragmentManager fragmentManager = getFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        FragmentInfo fragment = new FragmentInfo();
+                        fragmentTransaction.replace(R.id.fragment2, fragment, "Personale").addToBackStack(null).commit();
+                        break;
+                    }
+
+                    case 3:{    //iscritti
+                        FragmentManager fragmentManager = getFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        FragmentElencoPersone fragment = new FragmentElencoPersone();
+                        fragmentTransaction.replace(R.id.fragment2, fragment, "Iscritti").addToBackStack(null).commit();
+                        break;
+                    }
+
+                    case 4:{    //segnalazioni
+                        FragmentManager fragmentManager = getFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        FragmentSegnalazioni fragment = new FragmentSegnalazioni();
+                        fragmentTransaction.replace(R.id.fragment2, fragment, "Segnalazioni").addToBackStack(null).commit();
+                        break;
+                    }
+                }
+
             }
 
             @Override

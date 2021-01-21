@@ -88,21 +88,21 @@ public class SindacoHome extends AppCompatActivity {
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         SindacoComuniSeguiti fragment = new SindacoComuniSeguiti();
-                        fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();
+                        fragmentTransaction.replace(R.id.fragment, fragment, "ComuniSeguiti").addToBackStack(null).commit();
                     }
 
                     case 3:{
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         SindacoEventi fragment = new SindacoEventi();
-                        fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();
+                        fragmentTransaction.replace(R.id.fragment, fragment, "Eventi").addToBackStack(null).commit();
                     }
 
                     case 4:{
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         SindacoMappa fragment = new SindacoMappa();
-                        fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();
+                        fragmentTransaction.replace(R.id.fragment, fragment, "Mappa").addToBackStack(null).commit();
                     }
                 }
             }
