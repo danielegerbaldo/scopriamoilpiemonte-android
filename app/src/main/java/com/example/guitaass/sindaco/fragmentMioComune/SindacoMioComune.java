@@ -2,27 +2,95 @@ package com.example.guitaass.sindaco.fragmentMioComune;
 
 import android.annotation.SuppressLint;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+
+import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.R;
+import com.example.guitaass.condivisi.fragmentEventi.FragmentEventi;
+import com.google.android.material.tabs.TabLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressLint("ValidFragment")
 public class SindacoMioComune extends Fragment {
 
+    //@RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //View view = getView();
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sindaco_mio_comune, container, false);
+        //Context context = view.getContext();
+        //TabLayout tabLayout = view.findViewById(R.id.mio_comune_tab_layout);
+        /*FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill());
+        fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();*/
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        TabLayout tabLayout = view.findViewById(R.id.mio_comune_tab_layout);
+        Context context = view.getContext();
+        //Log.d("FragmentMioComune", "***********context = " + context);
+
+        //imposto il tab che si vede di default
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill());
+        fragmentTransaction.replace(R.id.fragment2, fragment, "Iscrizioni").addToBackStack(null).commit();
+
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                //Toast.makeText(context, "Hai selezionato: " + tab.getPosition(), Toast.LENGTH_SHORT).show();
+                //Log.d("FragmentMioComune", "***********tabSelected = " + tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+    private List<Evento> fakeRecyclerFill(){
+        List<Evento> list = new ArrayList<>();
+        list.add(new Evento((long)1, "prova evento mio comune1", 10, 2,
+                true, "evento di prova fake per verificare il corretto funzionamento dell'app",
+                "occhio a u coviddi", null, null, 1, 1));
+        list.add(new Evento((long)2, "prova evento mio comune2", 100, 2,
+                false, "evento tipico di Milanere, sono svariate le edizioni di questo evento che ricorre da più di 50 anni dove i protagonisti sono sempre stati: produttori locali, bande e scuole. Punto di forza? Le ciule ripiene e le frittelle di mele!!!!",
+                "non adatto a chi non gradisce i prodotti piemontesi, neh?!", null, null, 2, 2));
+        return list;
     }
 
     //TODO: modifica e metti menu bar

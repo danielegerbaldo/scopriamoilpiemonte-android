@@ -19,7 +19,9 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
+import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.R;
+import com.example.guitaass.condivisi.fragmentEventi.FragmentEventi;
 import com.example.guitaass.sindaco.fragmentComuniSeguiti.SindacoComuniSeguiti;
 import com.example.guitaass.sindaco.fragmentEventi.SindacoEventi;
 import com.example.guitaass.sindaco.fragmentIscrizioni.SindacoIscrizioni;
@@ -27,6 +29,9 @@ import com.example.guitaass.sindaco.fragmentMappa.SindacoMappa;
 import com.example.guitaass.sindaco.fragmentMioComune.SindacoMioComune;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SindacoHome extends AppCompatActivity {
 
@@ -48,7 +53,7 @@ public class SindacoHome extends AppCompatActivity {
         //Imposto il tab che si vede di default
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        SindacoIscrizioni fragment = new SindacoIscrizioni();
+        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill());
         fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -63,7 +68,7 @@ public class SindacoHome extends AppCompatActivity {
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         //cleanFragmentManager(fragmentManager);
-                        SindacoIscrizioni fragment = new SindacoIscrizioni();
+                        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill());
                         fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();
                         //Toast.makeText(context, "iscrizioni", Toast.LENGTH_SHORT).show();
                         break;
@@ -113,58 +118,16 @@ public class SindacoHome extends AppCompatActivity {
             }
         });
 
-
-
-
-        /*spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String elementoSelezionato = spinner.getSelectedItem().toString();
-                switch (elementoSelezionato){
-                    case "Iscrizioni":{
-                        FragmentManager fragmentManager = getFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        //cleanFragmentManager(fragmentManager);
-                        SindacoIscrizioni fragment = new SindacoIscrizioni();
-                        fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();
-                        Toast.makeText(view.getContext(), "iscrizioni", Toast.LENGTH_SHORT).show();
-                        break;
-                    }
-
-                    case "Mio Comune":{
-                        FragmentManager fragmentManager = getFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        //cleanFragmentManager(fragmentManager);
-                        SindacoMioComune fragment = new SindacoMioComune();
-                        fragmentTransaction.replace(R.id.fragment, fragment, "MioComune").addToBackStack(null).commit();
-                        Toast.makeText(view.getContext(), "mio comune", Toast.LENGTH_SHORT).show();
-                        break;
-                    }
-
-
-                    default:{
-                        Toast.makeText(view.getContext(), "errore/non ancora sviluppato", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });*/
     }
 
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.sindaco_home_menu, menu);
-        return true;
-    }*/
-
-    protected void cleanFragmentManager(FragmentManager fragmentManager){
-        while(fragmentManager.getBackStackEntryCount() != 0){
-            fragmentManager.popBackStack();
-        }
+    private List<Evento> fakeRecyclerFill(){
+        List<Evento> list = new ArrayList<>();
+        list.add(new Evento((long)1, "prova", 10, 2,
+                true, "evento di prova fake per verificare il corretto funzionamento dell'app",
+                "occhio a u coviddi", null, null, 1, 1));
+        list.add(new Evento((long)2, "festa delle ciule piene", 100, 2,
+                false, "evento tipico di Milanere, sono svariate le edizioni di questo evento che ricorre da più di 50 anni dove i protagonisti sono sempre stati: produttori locali, bande e scuole. Punto di forza? Le ciule ripiene e le frittelle di mele!!!!",
+                "non adatto a chi non gradisce i prodotti piemontesi, neh?!", null, null, 2, 2));
+        return list;
     }
 }

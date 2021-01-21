@@ -9,6 +9,7 @@
     tools:context=".sindaco.fragmentMioComune.SindacoMioComune">
 
     <com.google.android.material.tabs.TabLayout
+        android:id="@+id/mio_comune_tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFF"
@@ -41,4 +42,17 @@
             android:layout_height="wrap_content"
             android:text="Segnalazioni" />
     </com.google.android.material.tabs.TabLayout>
+
+    <!--<fragment
+        android:id="@+id/fragment2"
+        android:name="com.example.guitaass.condivisi.fragmentEventi.FragmentEventi"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />-->
+
+    <LinearLayout
+        android:id="@+id/fragment2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"></LinearLayout>
+
 </LinearLayout>

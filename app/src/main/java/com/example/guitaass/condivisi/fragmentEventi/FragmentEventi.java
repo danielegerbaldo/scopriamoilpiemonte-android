@@ -1,27 +1,33 @@
-package com.example.guitaass.sindaco.fragmentIscrizioni;
+package com.example.guitaass.condivisi.fragmentEventi;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.R;
+import com.example.guitaass.sindaco.fragmentIscrizioni.RecyclerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+public class FragmentEventi extends android.app.Fragment {
 
-public class SindacoIscrizioni extends android.app.Fragment {
+    private List<Evento> fakeList;
 
-    public SindacoIscrizioni() {
-        // Required empty public constructor
+    public FragmentEventi() {
+        fakeList = new ArrayList<>();
+    }
+
+    @SuppressLint("ValidFragment")
+    public FragmentEventi(List<Evento> fakeList) {
+        this.fakeList = fakeList;
     }
 
     @Override
@@ -42,11 +48,11 @@ public class SindacoIscrizioni extends android.app.Fragment {
         TextView messaggio = view.findViewById(R.id.messaggio);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        List<Evento> eventi = fakeRecyclerFill();
+        List<Evento> eventi = fakeList;
         if(eventi.size() > 0){
             recyclerView.setVisibility(View.VISIBLE);
             messaggio.setVisibility(View.GONE);
-            RecyclerAdapter adapter = new RecyclerAdapter(eventi);
+            FragmentEventiRecyclerAdapter adapter = new FragmentEventiRecyclerAdapter(eventi);
             recyclerView.setAdapter(adapter);
         }else{
             recyclerView.setVisibility(View.GONE);
@@ -54,14 +60,4 @@ public class SindacoIscrizioni extends android.app.Fragment {
         }
     }
 
-    private List<Evento> fakeRecyclerFill(){
-        List<Evento> list = new ArrayList<>();
-        list.add(new Evento((long)1, "prova", 10, 2,
-                true, "evento di prova fake per verificare il corretto funzionamento dell'app",
-                "occhio a u coviddi", null, null, 1, 1));
-        list.add(new Evento((long)2, "festa delle ciule piene", 100, 2,
-                false, "evento tipico di Milanere, sono svariate le edizioni di questo evento che ricorre da più di 50 anni dove i protagonisti sono sempre stati: produttori locali, bande e scuole. Punto di forza? Le ciule ripiene e le frittelle di mele!!!!",
-                "non adatto a chi non gradisce i prodotti piemontesi, neh?!", null, null, 2, 2));
-        return list;
-    }
 }
