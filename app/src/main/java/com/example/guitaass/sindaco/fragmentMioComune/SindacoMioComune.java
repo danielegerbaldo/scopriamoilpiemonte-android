@@ -63,7 +63,7 @@ public class SindacoMioComune extends Fragment {
         //imposto il tab che si vede di default
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill());
+        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill(), true);
         fragmentTransaction.replace(R.id.fragment2, fragment, "EventiComune").addToBackStack(null).commit();
 
 
@@ -76,7 +76,7 @@ public class SindacoMioComune extends Fragment {
                     case 0:{    //eventi
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill());
+                        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill(), true);
                         fragmentTransaction.replace(R.id.fragment2, fragment, "EventiComune").addToBackStack(null).commit();
                         break;
                     }

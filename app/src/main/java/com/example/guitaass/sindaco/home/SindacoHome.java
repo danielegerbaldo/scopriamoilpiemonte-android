@@ -45,7 +45,7 @@ public class SindacoHome extends AppCompatActivity {
         //Imposto il tab che si vede di default
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill());
+        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill(), true);
         fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -60,7 +60,7 @@ public class SindacoHome extends AppCompatActivity {
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         //cleanFragmentManager(fragmentManager);
-                        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill());
+                        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill(), true);
                         fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();
                         //Toast.makeText(context, "iscrizioni", Toast.LENGTH_SHORT).show();
                         break;
