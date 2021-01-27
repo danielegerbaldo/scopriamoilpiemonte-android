@@ -11,24 +11,12 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.gson.Gson;
-
 
 import androidx.appcompat.app.AppCompatActivity;
 
 
-import com.example.guitaass.DOM.Utente;
 import com.example.guitaass.R;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -39,8 +27,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import static com.google.gson.internal.bind.TypeAdapters.URL;
 
 
 public class CambiaComune extends AppCompatActivity implements OnItemSelectedListener {
