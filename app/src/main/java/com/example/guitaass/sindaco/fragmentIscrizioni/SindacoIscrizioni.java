@@ -2,13 +2,16 @@ package com.example.guitaass.sindaco.fragmentIscrizioni;
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.R;
@@ -18,6 +21,7 @@ import java.util.List;
 
 
 public class SindacoIscrizioni extends android.app.Fragment {
+    //TODO:"vecchio da cancellare
 
     public SindacoIscrizioni() {
         // Required empty public constructor
@@ -36,8 +40,22 @@ public class SindacoIscrizioni extends android.app.Fragment {
         return view;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+    }
+
     private void initRecyler(View view){
         //TODO: per ora semplice con il caso banale, è poi da rendere più complesso
+        //eliminazione dei pulsanti sotto che servono solo per la visuale de "il mio comune"
+        LinearLayout bottomLayout = view.findViewById(R.id.bottom_layout);
+        //bottomLayout.setVisibility(View.GONE);
+
+
+
+
         TextView messaggio = view.findViewById(R.id.messaggio);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));

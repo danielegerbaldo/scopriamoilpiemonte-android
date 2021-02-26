@@ -1,4 +1,4 @@
-package com.example.guitaass.condivisi.fragmentEventi;
+package com.example.guitaass.fragmentCondivisi.fragmentEventi;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;

@@ -8,14 +8,15 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.R;
-import com.example.guitaass.condivisi.fragmentEventi.FragmentEventi;
+import com.example.guitaass.fragmentCondivisi.fragmentEventi.FragmentEventi;
 import com.example.guitaass.sindaco.fragmentComuniSeguiti.SindacoComuniSeguiti;
 import com.example.guitaass.sindaco.fragmentEventi.SindacoEventi;
 import com.example.guitaass.sindaco.fragmentMappa.SindacoMappa;
@@ -45,14 +46,14 @@ public class SindacoHome extends AppCompatActivity {
         //Imposto il tab che si vede di default
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill(), true);
+        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill(), false);
         fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Log.d("onTabSelected", "****>>>elemento selezionato: " + tab.getPosition());
+                //Log.d("onTabSelected", "****>>>elemento selezionato: " + tab.getPosition());
                 int selezionato = tab.getPosition();
                 //Log.d("onTabSelected", "elemento selezionato: " + selezionato);
                 switch (selezionato){
@@ -60,7 +61,7 @@ public class SindacoHome extends AppCompatActivity {
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         //cleanFragmentManager(fragmentManager);
-                        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill(), true);
+                        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill(), false);
                         fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();
                         //Toast.makeText(context, "iscrizioni", Toast.LENGTH_SHORT).show();
                         break;
@@ -140,5 +141,16 @@ public class SindacoHome extends AppCompatActivity {
                 false, "evento tipico di Milanere, sono svariate le edizioni di questo evento che ricorre da più di 50 anni dove i protagonisti sono sempre stati: produttori locali, bande e scuole. Punto di forza? Le ciule ripiene e le frittelle di mele!!!!",
                 "non adatto a chi non gradisce i prodotti piemontesi, neh?!", null, null, 2, 2));
         return list;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(this, "funzione disabilitata", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Toast.makeText(this, "funzione disabilitata", Toast.LENGTH_SHORT).show();
+        return true;
     }
 }

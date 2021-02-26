@@ -5,22 +5,18 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
 import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.DOM.Utente;
 import com.example.guitaass.R;
-import com.example.guitaass.condivisi.fragmentEventi.FragmentEventi;
+import com.example.guitaass.fragmentCondivisi.fragmentEventi.FragmentEventi;
 import com.example.guitaass.sindaco.fragmentMioComune.fragmentElencoPersone.FragmentElencoPersone;
 import com.example.guitaass.sindaco.fragmentMioComune.fragmentInfo.FragmentInfo;
 import com.example.guitaass.sindaco.fragmentMioComune.fragmentSegnalazioni.FragmentSegnalazioni;
