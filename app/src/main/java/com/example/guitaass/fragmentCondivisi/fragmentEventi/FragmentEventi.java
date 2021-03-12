@@ -22,7 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.R;
-import com.example.guitaass.dialogCondivisi.creaEvento.DialogEvento;
+import com.example.guitaass.dialogCondivisi.creaEvento.DialogCreaEvento;
+import com.example.guitaass.dialogCondivisi.creaSondaggio.DialogCreaSondaggio;
+
 //import com.example.guitaass.fragmentCondivisi.FragmentCreaEvento.FragmentCreaEvento;
 
 import java.util.ArrayList;
@@ -71,10 +73,13 @@ public class FragmentEventi extends android.app.Fragment {
     private void initRecyler(View view){
         //TODO: per ora semplice con il caso banale, è poi da rendere più complesso
 
-
+        //elementi
         TextView messaggio = view.findViewById(R.id.messaggio);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         LinearLayout bottomLayout = view.findViewById(R.id.bottom_layout);
+
+
+
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         List<Evento> eventi = fakeList;
 
@@ -90,21 +95,28 @@ public class FragmentEventi extends android.app.Fragment {
             creaEvento.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DialogEvento dialogEvento = new DialogEvento(v.getContext());
+                    DialogCreaEvento dialogEvento = new DialogCreaEvento(v.getContext());
+                    //dialogEvento.setCancelable(true);
+                    dialogEvento.setCanceledOnTouchOutside(false);
                     dialogEvento.show();
-                    /*fragmentContainerView.setVisibility(View.VISIBLE);
-                    relativeLayout.setVisibility(View.INVISIBLE);
-                    Toast.makeText(view.getContext(), "cliccato crea nuovo evento", Toast.LENGTH_SHORT).show();
-                    FragmentCreaEvento creaEvento = new FragmentCreaEvento();
-                    FragmentManager fragmentManager = getFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.fragment_crea_nuovo_evento_sondaggio, creaEvento, "CreaEvento").commit();*/
-                    //fragmentContainerView.set
 
                 }
             });
+
+            Button creaSondaggio = view.findViewById(R.id.crea_sondaggio);
+            creaSondaggio.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DialogCreaSondaggio dialogSondaggio = new DialogCreaSondaggio(v.getContext());
+                    //dialogSondaggio.setCancelable(false);
+                    dialogSondaggio.setCanceledOnTouchOutside(false);
+                    dialogSondaggio.show();
+                }
+            });
+
         }else{
             bottomLayout.setVisibility(View.GONE);
+
         }
         //bottomLayout.setVisibility(View.GONE);
 
@@ -112,7 +124,14 @@ public class FragmentEventi extends android.app.Fragment {
         if(eventi.size() > 0){
             recyclerView.setVisibility(View.VISIBLE);
             messaggio.setVisibility(View.GONE);
-            FragmentEventiRecyclerAdapter adapter = new FragmentEventiRecyclerAdapter(eventi);
+            FragmentEventiRecyclerAdapter adapter;
+            if(visibilitaBottoniBassi){
+                //visualizza modifica e elimina
+                adapter = new FragmentEventiRecyclerAdapter(eventi, 1);
+            }else{
+                adapter = new FragmentEventiRecyclerAdapter(eventi, 2);
+            }
+
             recyclerView.setAdapter(adapter);
         }else{
             recyclerView.setVisibility(View.GONE);

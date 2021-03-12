@@ -13,20 +13,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.R;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-public class DialogEvento extends Dialog {
+public class DialogCreaEvento extends Dialog {
 
     private int anno;
     private int mese;
@@ -36,16 +39,23 @@ public class DialogEvento extends Dialog {
     private String note;
     private boolean streaming;
 
-    public DialogEvento(@NonNull Context context) {
+    private Evento evento = null;
+
+    public DialogCreaEvento(@NonNull Context context) {
         super(context);
 
     }
 
-    public DialogEvento(@NonNull Context context, int themeResId) {
+    public DialogCreaEvento(@NonNull Context context, Evento evento) {
+        super(context);
+        this.evento = evento;
+    }
+
+    public DialogCreaEvento(@NonNull Context context, int themeResId) {
         super(context, themeResId);
     }
 
-    protected DialogEvento(@NonNull Context context, boolean cancelable, @Nullable OnCancelListener cancelListener) {
+    protected DialogCreaEvento(@NonNull Context context, boolean cancelable, @Nullable OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
     }
 
@@ -64,6 +74,21 @@ public class DialogEvento extends Dialog {
         EditText descrizioneInput = findViewById(R.id.descrizione);
         EditText notaInput = findViewById(R.id.note);
         Spinner tipoEventoInput = findViewById(R.id.tipo_evento);
+        CheckBox streamingBox = findViewById(R.id.streaming);
+
+        if(evento != null){
+            TextView titolo = findViewById(R.id.titolo_dialog_crea_evento);
+            titolo.setText("Procedura per modificare l'evento: " + evento.getId());
+            nomeInput.setText(evento.getNome());
+            maxPersoneInput.setText("" + evento.getNumMaxPartecipanti());
+            streamingBox.setChecked(evento.isStreaming());
+            descrizioneInput.setText(evento.getDescrizione());
+            notaInput.setText(evento.getNote());
+            if(evento.getData() != null){
+                ottieniData.setText(evento.getData().toString());
+            }
+
+        }
 
         //riempimento fake di tipoevento
         ArrayList<String> tipiFake = new ArrayList<>();
@@ -87,6 +112,7 @@ public class DialogEvento extends Dialog {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int anno, int mese, int giorno) {
+                        ottieniData.setText("" + giorno + "/" + (mese+1) + "/" + anno);
                     }
                 }, anno, mese, giorno);
                 datePickerDialog.show();
@@ -107,6 +133,8 @@ public class DialogEvento extends Dialog {
             public void onClick(View v) {
                 //effettuare la richiesta al server
                 ProgressDialog progressDialog = new ProgressDialog(v.getContext());
+                progressDialog.setTitle("Creazione");
+                progressDialog.setMessage("sto contattando il server per creare il tuo sondaggio");
                 progressDialog.show();
 
             }

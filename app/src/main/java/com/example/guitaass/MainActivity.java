@@ -42,11 +42,13 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(v.getContext(), SindacoHome.class);
                     intent.putExtra("Username", "sindaco");
                     intent.putExtra("Email", "sindaco@gmail.com");
+                    intent.putExtra("Comune", 1);
                     startActivity(intent);
                 }else if(nome.getText().toString().equals("utente") && password.getText().toString().equals("utente")){
                     Intent intent = new Intent(v.getContext(), UtenteHome.class);
                     intent.putExtra("Username", "utente");
                     intent.putExtra("Email", "utente@gmail.com");
+                    intent.putExtra("Comune", 2);
                     startActivity(intent);
                 }else{
                     Toast.makeText(getApplicationContext(),"Utente sconosciuto!",Toast.LENGTH_SHORT).show();

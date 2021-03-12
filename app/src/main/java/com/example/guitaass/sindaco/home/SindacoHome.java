@@ -57,7 +57,7 @@ public class SindacoHome extends AppCompatActivity {
                 int selezionato = tab.getPosition();
                 //Log.d("onTabSelected", "elemento selezionato: " + selezionato);
                 switch (selezionato){
-                    case 0:{
+                    case 0:{    //iscrizioni del sindaco
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         //cleanFragmentManager(fragmentManager);
@@ -67,7 +67,7 @@ public class SindacoHome extends AppCompatActivity {
                         break;
                     }
 
-                    case 1:{
+                    case 1:{    //mio comune
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         //cleanFragmentManager(fragmentManager);
@@ -77,21 +77,22 @@ public class SindacoHome extends AppCompatActivity {
                         break;
                     }
 
-                    case 2:{
+                    case 2:{    //eventi
+                        FragmentManager fragmentManager = getFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        SindacoEventi fragment = new SindacoEventi();
+                        fragmentTransaction.replace(R.id.fragment, fragment, "Eventi").addToBackStack(null).commit();
+                        Toast.makeText(context, "Eventi", Toast.LENGTH_SHORT).show();
+                    }
+
+                    case 3:{    //comuni seguiti
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         SindacoComuniSeguiti fragment = new SindacoComuniSeguiti();
                         fragmentTransaction.replace(R.id.fragment, fragment, "ComuniSeguiti").addToBackStack(null).commit();
                     }
 
-                    case 3:{
-                        FragmentManager fragmentManager = getFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        SindacoEventi fragment = new SindacoEventi();
-                        fragmentTransaction.replace(R.id.fragment, fragment, "Eventi").addToBackStack(null).commit();
-                    }
-
-                    case 4:{
+                    case 4:{    //mappa
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         SindacoMappa fragment = new SindacoMappa();
@@ -132,7 +133,7 @@ public class SindacoHome extends AppCompatActivity {
         return true;
     }
 
-        private List<Evento> fakeRecyclerFill(){
+    private List<Evento> fakeRecyclerFill(){
         List<Evento> list = new ArrayList<>();
         list.add(new Evento((long)1, "prova", 10, 2,
                 true, "evento di prova fake per verificare il corretto funzionamento dell'app",
@@ -140,8 +141,13 @@ public class SindacoHome extends AppCompatActivity {
         list.add(new Evento((long)2, "festa delle ciule piene", 100, 2,
                 false, "evento tipico di Milanere, sono svariate le edizioni di questo evento che ricorre da più di 50 anni dove i protagonisti sono sempre stati: produttori locali, bande e scuole. Punto di forza? Le ciule ripiene e le frittelle di mele!!!!",
                 "non adatto a chi non gradisce i prodotti piemontesi, neh?!", null, null, 2, 2));
+        list.add(new Evento((long)3, "Secondo Evento comune", 100, 5,
+                true, "evento di prova fake per verificare il corretto funzionamento della visualizzazione",
+                "occhio a u coviddi", null, null, 3, 1));
         return list;
     }
+
+
 
     @Override
     public void onBackPressed() {

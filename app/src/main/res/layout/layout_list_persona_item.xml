@@ -49,7 +49,7 @@
         app:layout_constraintTop_toBottomOf="@+id/cognome" />
 
     <Button
-        android:id="@+id/btn_positivo"
+        android:id="@+id/btn_negativo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -59,12 +59,12 @@
         app:layout_constraintTop_toBottomOf="@+id/status" />
 
     <Button
-        android:id="@+id/btn_negativo"
+        android:id="@+id/btn_positivo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:text="positivo"
-        app:layout_constraintStart_toEndOf="@+id/btn_positivo"
-        app:layout_constraintTop_toTopOf="@+id/btn_positivo" />
+        app:layout_constraintStart_toEndOf="@+id/btn_negativo"
+        app:layout_constraintTop_toTopOf="@+id/btn_negativo" />
 </androidx.constraintlayout.widget.ConstraintLayout>

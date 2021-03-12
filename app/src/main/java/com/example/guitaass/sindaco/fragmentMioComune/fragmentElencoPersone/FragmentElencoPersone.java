@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,6 +45,19 @@ public class FragmentElencoPersone extends Fragment {
         View view = inflater.inflate(R.layout.fragment_sindaco_elenco_persone, container, false);
         initRecyler(view);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Button aggiungiPersonale = view.findViewById(R.id.aggiungi_personale);
+        //aggiungi personale farà comparire un dialog
+        aggiungiPersonale.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), "Funzione non ancora sviluppata", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void initRecyler(View view){

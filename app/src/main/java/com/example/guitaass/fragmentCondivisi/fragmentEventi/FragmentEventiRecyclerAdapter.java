@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.R;
+import com.example.guitaass.dialogCondivisi.creaEvento.DialogCreaEvento;
 
 import java.util.List;
 
@@ -22,9 +24,17 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
 
     private int posizioneEspansa = -1;  //in questa variabile mi salvo qual'è stata l'ultima posizione ad essere stata cliccata
 
+    private int visualizzazioneBottoni = 0;     /*
+                                            Questa variabile rappresenta quale visualizzazione devo realizzare dei bottoni:
+                                            1 = visualizzo tutto: testi = modifica, conferma, elimina
+                                            2 = solo negativo = disdici prenotazione
+                                            3 = negativo e modifica = modifica, elimina
+                                            */
 
-    public FragmentEventiRecyclerAdapter(List<Evento> eventi){
+
+    public FragmentEventiRecyclerAdapter(List<Evento> eventi, int visualizzazioneBottoni){
         this.eventi = eventi;
+        this.visualizzazioneBottoni = visualizzazioneBottoni;
     }
 
     @NonNull
@@ -49,9 +59,102 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
         holder.data.setText("" + eventi.get(position).getData());
         holder.id.setText("" + eventi.get(position).getId());
 
+
         //rende visibile o meno la parte extra
         if(position == posizioneEspansa){
             holder.extraInfo.setVisibility(View.VISIBLE);
+
+            //posso permettermi di definire qua il comportamento di modifica in quato è uguale in tutti i posti in cui compare
+            holder.modifica.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DialogCreaEvento modificaEvento = new DialogCreaEvento(v.getContext(), eventi.get(position));
+                    modificaEvento.show();
+                }
+            });
+
+            //imposto setto quali bottoni sono visibili
+            switch (visualizzazioneBottoni){
+                case 1:{    //1 = visualizzo tutto: testi = modifica, conferma, elimina
+                    holder.positivo.setVisibility(View.GONE);
+                    holder.positivo.setText("conferma");
+
+                    holder.negativo.setVisibility(View.VISIBLE);
+                    holder.negativo.setText("elimina");
+
+                    holder.modifica.setVisibility(View.VISIBLE);
+                    holder.modifica.setText("modifica");
+
+                    //imposto cosa fa il tasto negativo, ovvero quello che elimina l'evento
+
+                    holder.negativo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //Toast.makeText(v.getContext(), "hai cliccato elimina", Toast.LENGTH_SHORT).show();
+                            //prima di cancellare chiedo conferma dell'azione con un alertdialog
+                            AlertDialog.Builder confermaCancellazione = new AlertDialog.Builder(v.getContext());
+                            confermaCancellazione.setCancelable(false);
+                            confermaCancellazione.setTitle("Cancellazione");
+                            confermaCancellazione.setMessage("sicuro di voler cancellare l'evento dal tuo comune?");
+                            confermaCancellazione.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(v.getContext(), "l'evento è stato cancellato", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            confermaCancellazione.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            confermaCancellazione.show();
+                        }
+                    });
+                    break;
+                }
+
+                case 2:{    //2 = solo negativo = disdici prenotazione
+                    holder.positivo.setVisibility(View.GONE);
+                    holder.negativo.setVisibility(View.VISIBLE);
+                    holder.negativo.setText("disdici prenotazione");
+                    holder.modifica.setVisibility(View.GONE);
+
+                    //imposto il comportamento del tasto per disdire le prenotazioni
+                    holder.negativo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //prima di disdire la prenotazione chiedo conferma tramite un dialog
+                            AlertDialog.Builder confermaDisdici = new AlertDialog.Builder(v.getContext());
+                            confermaDisdici.setTitle("Disdici prenotazione");
+                            confermaDisdici.setMessage("Sei sicuro di voler disdire la tua prenotazione all'evento?");
+                            confermaDisdici.setCancelable(false);
+                            confermaDisdici.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //TODO: da sostituire con la vera cancellazione
+                                    Toast.makeText(v.getContext(), "La tua prenotazione verrà disdetta", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            confermaDisdici.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            confermaDisdici.show();
+                        }
+                    });
+                    break;
+                }
+
+                case 3:{    //3 = negativo e modifica = modifica, elimina
+                    holder.positivo.setVisibility(View.GONE);
+                    holder.negativo.setVisibility(View.VISIBLE);
+                    holder.modifica.setVisibility(View.VISIBLE);
+                    break;
+                }
+            }
         }else {
             holder.extraInfo.setVisibility(View.GONE);
         }

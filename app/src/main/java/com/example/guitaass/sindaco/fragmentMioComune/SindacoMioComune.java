@@ -59,7 +59,7 @@ public class SindacoMioComune extends Fragment {
         //imposto il tab che si vede di default
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill(), true);
+        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFillComune(), true);
         fragmentTransaction.replace(R.id.fragment2, fragment, "EventiComune").addToBackStack(null).commit();
 
 
@@ -72,7 +72,7 @@ public class SindacoMioComune extends Fragment {
                     case 0:{    //eventi
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill(), true);
+                        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFillComune(), true);
                         fragmentTransaction.replace(R.id.fragment2, fragment, "EventiComune").addToBackStack(null).commit();
                         break;
                     }
@@ -124,14 +124,14 @@ public class SindacoMioComune extends Fragment {
         });
     }
 
-    private List<Evento> fakeRecyclerFill(){
+    private List<Evento> fakeRecyclerFillComune(){
         List<Evento> list = new ArrayList<>();
-        list.add(new Evento((long)1, "prova evento mio comune1", 10, 2,
+        list.add(new Evento((long)1, "prova", 10, 2,
                 true, "evento di prova fake per verificare il corretto funzionamento dell'app",
                 "occhio a u coviddi", null, null, 1, 1));
-        list.add(new Evento((long)2, "prova evento mio comune2", 100, 2,
-                false, "evento tipico di Milanere, sono svariate le edizioni di questo evento che ricorre da più di 50 anni dove i protagonisti sono sempre stati: produttori locali, bande e scuole. Punto di forza? Le ciule ripiene e le frittelle di mele!!!!",
-                "non adatto a chi non gradisce i prodotti piemontesi, neh?!", null, null, 2, 2));
+        list.add(new Evento((long)3, "Secondo Evento comune", 100, 5,
+                true, "evento di prova fake per verificare il corretto funzionamento della visualizzazione",
+                "occhio a u coviddi", null, null, 3, 1));
         return list;
     }
     

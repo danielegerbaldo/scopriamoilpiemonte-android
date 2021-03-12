@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="#1B02EDED">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,15 +17,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="15dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="15dp">
 
             <TextView
-                android:id="@+id/titolo_dialog_crea_evento"
+                android:id="@+id/textView17"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="Procedura per creare un nuovo evento"
+                android:text="Procedura per creare un nuovo sondaggio"
                 android:textAlignment="center"
                 android:textSize="23dp"
                 android:textStyle="bold" />
@@ -37,13 +36,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center_horizontal"
-                android:text="Inserisci il nome dell'evento"
+                android:text="Inserisci il nome dell'evento di cui si vuole fare il sondaggio"
                 android:textAlignment="center"
                 android:textSize="18dp"
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/nome_evento"
+                android:id="@+id/nome_sondaggio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -56,17 +55,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center_horizontal"
-                android:text="Inserisci il numero massimo di partecipanti"
+                android:text="Inserisci il numero minimo di adesioni"
                 android:textAlignment="center"
                 android:textSize="18dp"
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/max_persone"
+                android:id="@+id/min_persone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="max partecipanti"
+                android:hint="min adesioni"
                 android:inputType="numberSigned" />
 
             <CheckBox
@@ -147,7 +146,7 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/nuovo_evento_data"
+                android:id="@+id/nuovo_sondaggio_data"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="data" />
@@ -160,7 +159,7 @@
                 android:paddingHorizontal="0dp">
 
                 <Button
-                    android:id="@+id/crea_nuovo_evento"
+                    android:id="@+id/crea_nuovo_sondaggio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5dp"
@@ -168,7 +167,7 @@
                     android:text="Conferma" />
 
                 <Button
-                    android:id="@+id/annulla_nuovo_evento"
+                    android:id="@+id/annulla_nuovo_sondaggio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5dp"
@@ -176,6 +175,9 @@
                     android:text="Annulla"
                     app:backgroundTint="#DC1F1F" />
             </LinearLayout>
+
         </LinearLayout>
+
+
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
