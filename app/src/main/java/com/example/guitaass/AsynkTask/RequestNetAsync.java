@@ -9,6 +9,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.google.android.gms.common.util.HttpUtils;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -45,8 +49,8 @@ public class RequestNetAsync extends AsyncTask<String, String, String> {
     protected void onPostExecute(String s) {
         Log.d("onPostExecute", "Result = " + s);
         //Toast.makeText(context, "Result = " + s, Toast.LENGTH_SHORT).show();
-        progressDialog.dismiss();
-        result = s;
+        //progressDialog.dismiss();
+        /*result = s;
         switch (result){
             case "\"OK\"":
                 result = "OK";
@@ -72,9 +76,9 @@ public class RequestNetAsync extends AsyncTask<String, String, String> {
             case "\"ERRUT\"":
                 result = "ERRUT";
                 break;
-        }
+        }*/
         Bundle bundle = new Bundle();
-        bundle.putString("RESULT", result);
+        bundle.putString("RESULT", s);
         resultMessage.setData(bundle);
         resultMessage.sendToTarget();
     }
@@ -100,36 +104,58 @@ public class RequestNetAsync extends AsyncTask<String, String, String> {
     protected String doInBackground(String... args){
         try{
             Log.d("RequestAsybc", "sono in backgrund");
-            return sendPost(args[0], args[1]);
+            return sendGet(args[0], args[1]);
         }catch (Exception e){
             return"connessione_timeout";
         }
     }
 
-    private static String sendPost(String urlLink, String param) throws Exception {
-        String parameters = param;
+    @NotNull
+    private static String sendGet(String urlLink, String body) throws Exception {
+        Log.d("AsynchTask", "¿¿¿¿¿¿¿¿¿¿¿¿¿¿Link: " + urlLink + "; body: " + body);
+        //impostazioni della connessione
         URL url = new URL(urlLink);
+
+
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
         connection.setReadTimeout(20000);
         connection.setConnectTimeout(20000);
-        connection.setRequestMethod("POST");
         connection.setDoInput(true);
         connection.setDoOutput(true);
-        Log.d("URL", String.valueOf(url));
-        Log.d("Connection", String.valueOf(connection));
+        connection.setRequestProperty("Content-Type", "application/json");
+        //connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
+        Log.d("AsynchTask", "sendGet: method= " + connection.getRequestMethod());
+
+
+        //dichiarazione di un output streamer
         OutputStream os = connection.getOutputStream();
         BufferedWriter writer = new BufferedWriter( new OutputStreamWriter(os, "UTF-8"));
-        Log.d("SendPost", parameters);
-        writer.write((parameters));
+
+
+        //scrivo il body della richiesta
+        writer.write((body));
         writer.flush();
         writer.close();
+        Log.d("AsynchTask", "sendGet: connection.toString = " + connection.toString());
+        Log.d("AsynchTask", "sendGet: connection.getRequestProperty = " + connection.getRequestProperty("email"));
+        Log.d("AsynchTask", "sendGet: connection.getContentType = " + connection.getContentType());
+        Log.d("AsynchTask", "sendGet: connection.getContent = " + connection.getContent());
         os.close();
+        //connection.connect();
+
+
+        
+
+
+
         int responseCode = connection.getResponseCode();
         if (responseCode == HttpsURLConnection.HTTP_OK) {
             //Toast.makeText(context, "HTTP OK", Toast.LENGTH_SHORT).show();
-            Log.d("responseCode", "OK");
-            BufferedReader in = new BufferedReader( new InputStreamReader(connection.getInputStream()));
-            Log.d("Reader", "creato il buffer reader");
+
+            /*BufferedReader in = new BufferedReader( new InputStreamReader(connection.getInputStream()));
+
             StringBuffer sb = new StringBuffer("");
             String line = "";
             while((line = in.readLine()) != null) {
@@ -139,7 +165,8 @@ public class RequestNetAsync extends AsyncTask<String, String, String> {
             }
             in.close();
             Log.d("sendPost", "result: " + sb.toString());
-            return sb.toString();
+            return sb.toString();*/
+            return "ok";
         }
         return "ERROR";
     }
