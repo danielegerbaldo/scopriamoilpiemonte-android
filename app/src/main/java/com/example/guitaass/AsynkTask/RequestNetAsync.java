@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -111,10 +112,31 @@ public class RequestNetAsync extends AsyncTask<String, String, String> {
     }
 
     @NotNull
-    private static String sendGet(String urlLink, String body) throws Exception {
+    private String sendGet(String urlLink, String body) throws Exception {
         Log.d("AsynchTask", "¿¿¿¿¿¿¿¿¿¿¿¿¿¿Link: " + urlLink + "; body: " + body);
         //impostazioni della connessione
         URL url = new URL(urlLink);
+        /*RequestQueue queue = Volley.newRequestQueue(context);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, urlLink, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                // Display the first 500 characters of the response string.
+                //textView.setText("Response is: "+ response.substring(0,500));
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //textView.setText("That didn't work!");
+            }
+        });
+        queue.add(stringRequest);
+        queue.start();*/
+        /*
+        HttpResponse response = null;
+        HttpClient client = new DefaultHttpClient();
+        HttpGet request = new HttpGet();
+        request.setURI(URI.create(urlLink));
+        response = client.execute(request);*/
 
 
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -123,10 +145,10 @@ public class RequestNetAsync extends AsyncTask<String, String, String> {
         connection.setConnectTimeout(20000);
         connection.setDoInput(true);
         connection.setDoOutput(true);
-        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestProperty("Content-type", "application/json");
         //connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 
-        Log.d("AsynchTask", "sendGet: method= " + connection.getRequestMethod());
+        Log.d("AsynchTask", "sendGet: method = " + connection.getRequestMethod());
 
 
         //dichiarazione di un output streamer
@@ -135,7 +157,7 @@ public class RequestNetAsync extends AsyncTask<String, String, String> {
 
 
         //scrivo il body della richiesta
-        writer.write((body));
+        writer.write(body);
         writer.flush();
         writer.close();
         Log.d("AsynchTask", "sendGet: connection.toString = " + connection.toString());
@@ -150,7 +172,8 @@ public class RequestNetAsync extends AsyncTask<String, String, String> {
 
 
 
-        int responseCode = connection.getResponseCode();
+        //int responseCode = connection.getResponseCode();
+        int responseCode = -1;
         if (responseCode == HttpsURLConnection.HTTP_OK) {
             //Toast.makeText(context, "HTTP OK", Toast.LENGTH_SHORT).show();
 

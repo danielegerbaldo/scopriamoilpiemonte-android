@@ -19,13 +19,25 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.guitaass.AsynkTask.RequestNetAsync;
+import com.example.guitaass.DOM.Utente;
 import com.example.guitaass.classiComode.RichiestaLogin;
+import com.example.guitaass.retrofit.API;
+import com.example.guitaass.retrofit.RetrofitClient;
 import com.example.guitaass.sindaco.home.SindacoAiuto;
 import com.example.guitaass.sindaco.home.SindacoHome;
 import com.example.guitaass.utente.home.UtenteHome;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,16 +77,54 @@ public class MainActivity extends AppCompatActivity {
         accedi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText email = findViewById(R.id.name);
-                EditText password = findViewById(R.id.password);
+                EditText emailEdit = findViewById(R.id.name);
+                EditText passwordEdit = findViewById(R.id.password);
+
+                Map<String, String> mapdata = new HashMap<>();
+                mapdata.put("email", emailEdit.getText().toString());
+                mapdata.put("password", passwordEdit.getText().toString());
+                RichiestaLogin richiestaLogin = new RichiestaLogin(passwordEdit.getText().toString(), emailEdit.getText().toString());
+                Call<String> call = RetrofitClient.getInstance(getApplicationContext()).getMyApi().login(richiestaLogin);
+                /*try {
+                    Response<String> response = call.();
+                    Toast.makeText(getApplicationContext(), response.body(), Toast.LENGTH_LONG).show();
+                } catch (IOException e) {
+                    Toast.makeText(getApplicationContext(), "errore richiesta", Toast.LENGTH_LONG).show();
+                }*/
+
+                call.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        String  stringResponse = response.body();
+
+                        //superListView.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, oneHeroes));
+                        Toast.makeText(getApplicationContext(), stringResponse, Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Log.d("MAIN-Act", "onFailure: call  = " +  call.request().toString());
+                        Log.d("MAIN-Act", "onFailure: throwable = " + t.getMessage() + "; " + t.getCause());
+                        Toast.makeText(getApplicationContext(), "An error has occured", Toast.LENGTH_LONG).show();
+                    }
+
+                });
+
+
+
+
+
+
+
+
+
                 //String richiesta = preparaRichiesta();
-                String link = "http://" + shpr.getString("IP", "localhost") +
-                        ":9090/api/v1/utente/login";
-                String body = generaBody(email.getText().toString(), password.getText().toString());
+                //String link = "http://" + shpr.getString("IP", "localhost") + ":9090/api/v1/utente";
+                //String body = generaBody(email.getText().toString(), password.getText().toString());
                 //genero l'oggetto che si occupa delle richieste asincrone
-                RequestNetAsync async = new RequestNetAsync(v.getContext(), messageHandler, "LOGIN", "Connessione..." );
+                //RequestNetAsync async = new RequestNetAsync(v.getContext(), messageHandler, "LOGIN", "Connessione..." );
                 //avvio una richiesta asincrona passando come parametro il body della richiesta
-                async.execute(link, body);
+                //async.execute(link, body);
                 /*Log.d("Login Activity", "nome = " + nome.getText());
                 Log.d("Login Activity", "nome = " + password.getText());
                 Log.d("Login Activity", "nome.getText().equals(\"sindaco\") = " + nome.getText().equals("sindaco") );
