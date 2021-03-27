@@ -5,9 +5,12 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,12 +29,21 @@ import androidx.annotation.RequiresApi;
 
 import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.R;
+import com.example.guitaass.retrofit.eventServer.RetrofitEventClient;
+import com.google.gson.Gson;
 
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DialogCreaEvento extends Dialog {
 
+    private static final String TAG = "DialogCreaEvento";
     private int anno;
     private int mese;
     private int giorno;
@@ -38,6 +51,11 @@ public class DialogCreaEvento extends Dialog {
     private String descrizione;
     private String note;
     private boolean streaming;
+
+    private SharedPreferences shpr;
+
+    private long utenteID;
+    private long comuneID;
 
     private Evento evento = null;
 
@@ -49,6 +67,8 @@ public class DialogCreaEvento extends Dialog {
     public DialogCreaEvento(@NonNull Context context, Evento evento) {
         super(context);
         this.evento = evento;
+        this.utenteID = shpr.getLong("utente_id", -1);
+        this.comuneID = shpr.getLong("comune_id",-1);
     }
 
     public DialogCreaEvento(@NonNull Context context, int themeResId) {
@@ -64,6 +84,9 @@ public class DialogCreaEvento extends Dialog {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_crea_evento);
+
+        shpr = PreferenceManager.getDefaultSharedPreferences(getContext());
+        Log.d(TAG, "onCreate: shpr = " + shpr);
         //tutti gli elementi
         Button ottieniData = findViewById(R.id.nuovo_evento_data);
         Button conferma = findViewById(R.id.crea_nuovo_evento);
@@ -111,8 +134,11 @@ public class DialogCreaEvento extends Dialog {
             public void onClick(View v) {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
-                    public void onDateSet(DatePicker view, int anno, int mese, int giorno) {
-                        ottieniData.setText("" + giorno + "/" + (mese+1) + "/" + anno);
+                    public void onDateSet(DatePicker view, int annoN, int meseN, int giornoN) {
+                        ottieniData.setText("" + giornoN + "/" + (meseN+1) + "/" + annoN);
+                        anno = annoN;
+                        mese = meseN;
+                        giorno = giornoN;
                     }
                 }, anno, mese, giorno);
                 datePickerDialog.show();
@@ -132,11 +158,50 @@ public class DialogCreaEvento extends Dialog {
             @Override
             public void onClick(View v) {
                 //effettuare la richiesta al server
-                ProgressDialog progressDialog = new ProgressDialog(v.getContext());
+                /*ProgressDialog progressDialog = new ProgressDialog(v.getContext());
                 progressDialog.setTitle("Creazione");
-                progressDialog.setMessage("sto contattando il server per creare il tuo sondaggio");
-                progressDialog.show();
+                progressDialog.setMessage("sto contattando il server per creare il tuo evento");
+                progressDialog.show();*/
+                java.util.Date dateUtil = calendar.getTime();
+                Log.d(TAG, "util.Date: " + dateUtil + "; anno = " + dateUtil.getYear());
+                java.sql.Date dateSql = new java.sql.Date(dateUtil.getTime());
+                Log.d(TAG, "sql.Date.toString: " + dateSql.toString() + "; anno = " + dateSql.getYear());
+                Log.d(TAG, "y: " + anno + "; m: " + mese + "; d: " + giorno);
 
+                utenteID = shpr.getLong("utente_id", -1);
+                comuneID = shpr.getLong("comune_id",-1);
+
+                Log.d(TAG, "utenteID = " + utenteID + "; comuneID = " + comuneID);
+
+                Evento nuovoEvento = new Evento(null, nomeInput.getText().toString(),
+                        Integer.parseInt(maxPersoneInput.getText().toString()), 0, streamingBox.isChecked(),
+                        descrizioneInput.getText().toString(), notaInput.getText().toString(),
+                        null, dateUtil, utenteID, comuneID);
+                Call<Evento> call = RetrofitEventClient.getInstance(getContext()).getMyAPI().creaNuovoEvento(nuovoEvento);
+
+                Log.d(TAG, ">body richiesta nuovo evento: b: " + call.request().body().toString());
+                Log.d(TAG, "> nuovo evento: data: " + nuovoEvento.getData().toString());
+                Log.d(TAG, ">body richiesta nuovo evento: " + call.request().toString());
+
+                call.enqueue(new Callback<Evento>() {
+                    @Override
+                    public void onResponse(Call<Evento> call, Response<Evento> response) {
+                        if(response.isSuccessful()){
+                            Toast.makeText(getContext(), "Nuovo evento creato: " + response.body().getId(), Toast.LENGTH_LONG).show();
+                            dismiss();
+                        }else{
+                            Toast.makeText(getContext(), "C'è stato un errore col server" , Toast.LENGTH_LONG).show();
+                            Log.d(TAG, "onResponse: error: " + call.request().body());
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<Evento> call, Throwable t) {
+                        Toast.makeText(getContext(), "Non sono riuscito a comunicare col server", Toast.LENGTH_LONG).show();
+
+                    }
+                });
             }
         });
     }

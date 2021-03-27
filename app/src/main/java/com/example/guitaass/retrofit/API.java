@@ -30,7 +30,9 @@ public interface API {
     Call<List<Utente>> getUsers();
 
     @POST("login")
-    Call<String> login(/*@Query(value="richiestaLogin", encoded=false) RichiestaLogin richiestaLogin */ /*@QueryMap Map<String, String> richiestaLogin*/ @Body RichiestaLogin richiestaLogin);
+    Call<Map<String, String>> login(@Body Map<String, String> body);
 
+    @POST(".")
+    Call<Map<String, String>> registrati(@Body Map<String, String> body);
 
 }

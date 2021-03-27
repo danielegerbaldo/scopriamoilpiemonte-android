@@ -15,7 +15,9 @@ public class Evento {
     private long proprietario;
     private long comune;
 
-    public Evento(Long id, String nome, int numMaxPartecipanti, int partecipanti, boolean streaming, String descrizione, String note, TipoEvento tipoEvento, Date data, long proprietario, long comune) {
+    public Evento(Long id, String nome, int numMaxPartecipanti, int partecipanti, boolean streaming,
+                  String descrizione, String note, TipoEvento tipoEvento, Date data, long proprietario,
+                  long comune) {
         this.id = id;
         this.nome = nome;
         this.numMaxPartecipanti = numMaxPartecipanti;

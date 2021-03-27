@@ -27,6 +27,7 @@ import com.example.guitaass.sindaco.home.SindacoAiuto;
 import com.example.guitaass.sindaco.home.SindacoHome;
 import com.example.guitaass.utente.home.UtenteHome;
 import com.google.gson.Gson;
+import com.google.gson.internal.$Gson$Types;
 
 import org.json.JSONObject;
 
@@ -35,12 +36,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     private SharedPreferences shpr;
 
     //message handler della risposta
@@ -66,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button registrati = findViewById(R.id.registrati);
         registrati.setOnClickListener(new View.OnClickListener() {
+            //visualizza la activity per la registrazione
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), Registrazione.class);
@@ -74,79 +79,131 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Button accedi = findViewById(R.id.accedi);
+
+        //TODO: aggiungere progress dialog
+
+        //gestione del tasto "accedi"
         accedi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 EditText emailEdit = findViewById(R.id.name);
                 EditText passwordEdit = findViewById(R.id.password);
 
+                //creo una Map in cui inserirò i dati della richiesta
                 Map<String, String> mapdata = new HashMap<>();
                 mapdata.put("email", emailEdit.getText().toString());
                 mapdata.put("password", passwordEdit.getText().toString());
-                RichiestaLogin richiestaLogin = new RichiestaLogin(passwordEdit.getText().toString(), emailEdit.getText().toString());
-                Call<String> call = RetrofitClient.getInstance(getApplicationContext()).getMyApi().login(richiestaLogin);
-                /*try {
-                    Response<String> response = call.();
-                    Toast.makeText(getApplicationContext(), response.body(), Toast.LENGTH_LONG).show();
-                } catch (IOException e) {
-                    Toast.makeText(getApplicationContext(), "errore richiesta", Toast.LENGTH_LONG).show();
-                }*/
 
-                call.enqueue(new Callback<String>() {
+                //Creo una call per la richiesta tramite retrofit2
+                Call<Map<String, String>> call = RetrofitClient.getInstance(getApplicationContext()).getMyApi().login(mapdata);
+                Log.d(TAG, "call: b: " + call.request().body().toString());
+                Log.d(TAG, "call: " + call.request().toString());
+
+                //TODO: AGGIUNGI IL DIALOG PER DARE FEEDBACK
+                //mando la richiesta
+                call.enqueue(new Callback<Map<String, String>>() {
                     @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        String  stringResponse = response.body();
-
+                    public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
                         //superListView.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, oneHeroes));
-                        Toast.makeText(getApplicationContext(), stringResponse, Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), stringResponse, Toast.LENGTH_LONG).show();
+                        //ingresso(response, emailEdit.getText().toString());
+                        Log.d(TAG, "onResponse: r: " + response.toString());
+                        if(response.body() != null){
+                            //se il body è nullo, vuol dire che il server non ha mandato un HTTP.OK, quindi lo troviamo in bodyError
+                            Log.d(TAG, "onResponse: body: " + response.body().toString());
+                            Log.d(TAG, "onResponse: body: " + response.body().get("ruolo"));
+                            ingresso(response.body(), emailEdit.getText().toString());
+
+                        }else {
+                            //il server ha restituito un qualche errore
+                            Log.d(TAG, "onResponse: bad body: " + response.errorBody().toString());
+                            Log.d(TAG, "onResponse: error message: " + response.message());
+                            try {
+                                //se riesco ad ottenere l'errorbody lo mostro
+                                String t = response.errorBody().string();
+                                Map<String, String> temp = new Gson().fromJson(t, Map.class);
+                                //mostro l'errore resituito dal server
+                                Toast.makeText(getApplicationContext(), temp.get("errore"), Toast.LENGTH_LONG).show();
+                                Log.d(TAG, "onResponse: bad body: error: " + temp.get("errore"));
+                            } catch (IOException e) {
+                                //altrimenti comunico un errore generico
+                                Toast.makeText(getApplicationContext(), "non è stato possibile ottenere l'errore dal server", Toast.LENGTH_LONG).show();
+                            }
+
+                        }
                     }
 
                     @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                        Log.d("MAIN-Act", "onFailure: call  = " +  call.request().toString());
-                        Log.d("MAIN-Act", "onFailure: throwable = " + t.getMessage() + "; " + t.getCause());
-                        Toast.makeText(getApplicationContext(), "An error has occured", Toast.LENGTH_LONG).show();
+                    public void onFailure(Call<Map<String, String>> call, Throwable t) {
+                        //c'è stato qualche errore durante la comunicazione
+                        Log.d(TAG, "onFailure: call  = " +  call.request().toString());
+                        Log.d(TAG, "onFailure: throwable = " + t.getMessage() + "; " + t.getCause());
+                        Log.d(TAG, "onFailure: throwable = " + t.toString());
+                        Toast.makeText(getApplicationContext(), "errore durante la comunicazione", Toast.LENGTH_LONG).show();
                     }
 
                 });
 
-
-
-
-
-
-
-
-
-                //String richiesta = preparaRichiesta();
-                //String link = "http://" + shpr.getString("IP", "localhost") + ":9090/api/v1/utente";
-                //String body = generaBody(email.getText().toString(), password.getText().toString());
-                //genero l'oggetto che si occupa delle richieste asincrone
-                //RequestNetAsync async = new RequestNetAsync(v.getContext(), messageHandler, "LOGIN", "Connessione..." );
-                //avvio una richiesta asincrona passando come parametro il body della richiesta
-                //async.execute(link, body);
-                /*Log.d("Login Activity", "nome = " + nome.getText());
-                Log.d("Login Activity", "nome = " + password.getText());
-                Log.d("Login Activity", "nome.getText().equals(\"sindaco\") = " + nome.getText().equals("sindaco") );
-                Log.d("Login Activity", "password.getText().equals(\"sindaco\") = " + password.getText().equals("sindaco"));*/
-                /*if(nome.getText().toString().equals("sindaco") && password.getText().toString().equals("sindaco")){
-                    Intent intent = new Intent(v.getContext(), SindacoHome.class);
-                    intent.putExtra("Username", "sindaco");
-                    intent.putExtra("Email", "sindaco@gmail.com");
-                    intent.putExtra("Comune", 1);
-                    startActivity(intent);
-                }else if(nome.getText().toString().equals("utente") && password.getText().toString().equals("utente")){
-                    Intent intent = new Intent(v.getContext(), UtenteHome.class);
-                    intent.putExtra("Username", "utente");
-                    intent.putExtra("Email", "utente@gmail.com");
-                    intent.putExtra("Comune", 2);
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(getApplicationContext(),"Utente sconosciuto!",Toast.LENGTH_SHORT).show();
-                }*/
             }
         });
     }
+
+    private void ingresso(Map<String, String> valori, String email){
+        Intent intent = new Intent();
+        intent.putExtra("Nome", valori.get("nome"));
+        intent.putExtra("Cognome", valori.get("cognome"));
+        intent.putExtra("Email", email);
+
+        //mi salvo nelle shared preference il ruolo e se è un pubblicatore mi salvo anche il comune
+        shpr.edit().putLong("utente_id", Long.parseLong(valori.get("utente_id"))).commit();
+
+        if(valori.get("ruolo").equals("sindaco")){
+            intent.setClass(getApplicationContext(), SindacoHome.class);
+            Toast.makeText(getApplicationContext(), "login come sindaco di: " + Long.parseLong(valori.get("comune_id")), Toast.LENGTH_LONG).show();
+            shpr.edit().putLong("comune_id", Long.parseLong(valori.get("comune_id"))).commit();
+            Log.d(TAG, "> login: utente_id = " + Long.parseLong(valori.get("utente_id")) + "; comune_id = " + Long.parseLong(valori.get("comune_id")));
+            //startActivity(intent);
+        }else{
+            intent.setClass(getApplicationContext(), UtenteHome.class);
+        }
+        startActivity(intent);
+    }
+
+    /*private void ingresso(Response<String> response, String email) {
+        Map<String, String> valoriRisposta;
+        //se si ha ottenuto un errore il body non sarà nel body ma in errorbody, quindi bisogna distinguere i due casi
+        if(response.code() == HttpsURLConnection.HTTP_OK){
+            Log.d(TAG, "ingresso: body = " + response.body());
+            valoriRisposta = new Gson().fromJson(response.body(), Map.class);
+        }else{
+            try {
+                valoriRisposta = new Gson().fromJson(response.errorBody().string(), Map.class);
+            } catch (IOException e) {
+                valoriRisposta = null;
+            }
+        }
+        if(valoriRisposta != null){
+            if(response.code() == HttpsURLConnection.HTTP_OK){
+                Intent intent = new Intent();
+                intent.putExtra("Nome", valoriRisposta.get("nome"));
+                intent.putExtra("Cognome", valoriRisposta.get("cognome"));
+                intent.putExtra("Email", email);
+
+                if(valoriRisposta.get("ruolo").equals("sindaco")){
+                    intent.setClass(getApplicationContext(), SindacoHome.class);
+                    intent.putExtra("Comune", 1);
+                    //startActivity(intent);
+                }else{
+                    intent.setClass(getApplicationContext(), UtenteHome.class);
+                }
+                startActivity(intent);
+            }else{
+                Toast.makeText(getApplicationContext(),valoriRisposta.get("errore"),Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            Toast.makeText(getApplicationContext(), "Problema con la MAP",Toast.LENGTH_SHORT).show();
+        }
+    }*/
 
     private void preferenzeCondivise() {
         if (shpr.getString("IP", "NOTFOUND").equals("NOTFOUND")){
