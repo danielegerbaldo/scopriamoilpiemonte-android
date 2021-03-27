@@ -30,7 +30,7 @@ public interface API {
     Call<List<Utente>> getUsers();
 
     @POST("login")
-    Call<Map<String, String>> login(@Body Map<String, String> body);
+    Call<Utente> login(@Body Map<String, String> body);
 
     @POST(".")
     Call<Map<String, String>> registrati(@Body Map<String, String> body);

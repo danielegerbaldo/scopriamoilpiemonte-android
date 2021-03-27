@@ -74,10 +74,10 @@ public class UtenteHome extends AppCompatActivity {
 
     private List<Utente> fakeRecyclerFill(){
         List<Utente> list = new ArrayList<>();
-        list.add(new Utente(1,"Flavio", "Roman","status"));
+        /*list.add(new Utente(1,"Flavio", "Roman","status"));
         list.add(new Utente(2,"Mattia","Martello","status"));
         list.add(new Utente(3,"Daniele","Gerbaldo","status"));
-        list.add(new Utente(4,"Francesco","Conforti","status"));
+        list.add(new Utente(4,"Francesco","Conforti","status"));*/
         return list;
     }
 

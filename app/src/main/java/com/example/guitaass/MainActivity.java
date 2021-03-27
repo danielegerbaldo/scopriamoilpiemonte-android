@@ -95,46 +95,28 @@ public class MainActivity extends AppCompatActivity {
                 mapdata.put("password", passwordEdit.getText().toString());
 
                 //Creo una call per la richiesta tramite retrofit2
-                Call<Map<String, String>> call = RetrofitClient.getInstance(getApplicationContext()).getMyApi().login(mapdata);
+                Call<Utente> call = RetrofitClient.getInstance(getApplicationContext()).getMyApi().login(mapdata);
                 Log.d(TAG, "call: b: " + call.request().body().toString());
                 Log.d(TAG, "call: " + call.request().toString());
 
                 //TODO: AGGIUNGI IL DIALOG PER DARE FEEDBACK
                 //mando la richiesta
-                call.enqueue(new Callback<Map<String, String>>() {
+                call.enqueue(new Callback<Utente>() {
                     @Override
-                    public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
-                        //superListView.setAdapter(new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, oneHeroes));
-                        //Toast.makeText(getApplicationContext(), stringResponse, Toast.LENGTH_LONG).show();
-                        //ingresso(response, emailEdit.getText().toString());
+                    public void onResponse(Call<Utente> call, Response<Utente> response) {
                         Log.d(TAG, "onResponse: r: " + response.toString());
                         if(response.body() != null){
                             //se il body è nullo, vuol dire che il server non ha mandato un HTTP.OK, quindi lo troviamo in bodyError
                             Log.d(TAG, "onResponse: body: " + response.body().toString());
-                            Log.d(TAG, "onResponse: body: " + response.body().get("ruolo"));
-                            ingresso(response.body(), emailEdit.getText().toString());
-
+                            Log.d(TAG, "onResponse: body: " + response.body().getRuolo());
+                            ingresso(response.body());
                         }else {
-                            //il server ha restituito un qualche errore
-                            Log.d(TAG, "onResponse: bad body: " + response.errorBody().toString());
-                            Log.d(TAG, "onResponse: error message: " + response.message());
-                            try {
-                                //se riesco ad ottenere l'errorbody lo mostro
-                                String t = response.errorBody().string();
-                                Map<String, String> temp = new Gson().fromJson(t, Map.class);
-                                //mostro l'errore resituito dal server
-                                Toast.makeText(getApplicationContext(), temp.get("errore"), Toast.LENGTH_LONG).show();
-                                Log.d(TAG, "onResponse: bad body: error: " + temp.get("errore"));
-                            } catch (IOException e) {
-                                //altrimenti comunico un errore generico
-                                Toast.makeText(getApplicationContext(), "non è stato possibile ottenere l'errore dal server", Toast.LENGTH_LONG).show();
-                            }
-
+                            Toast.makeText(getApplicationContext(), "email o password errati", Toast.LENGTH_LONG).show();
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<Map<String, String>> call, Throwable t) {
+                    public void onFailure(Call<Utente> call, Throwable t) {
                         //c'è stato qualche errore durante la comunicazione
                         Log.d(TAG, "onFailure: call  = " +  call.request().toString());
                         Log.d(TAG, "onFailure: throwable = " + t.getMessage() + "; " + t.getCause());
@@ -148,62 +130,30 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void ingresso(Map<String, String> valori, String email){
-        Intent intent = new Intent();
-        intent.putExtra("Nome", valori.get("nome"));
-        intent.putExtra("Cognome", valori.get("cognome"));
-        intent.putExtra("Email", email);
+    private void ingresso(Utente utente){
+        if(utente != null){
+            //Toast.makeText(getApplicationContext(), "login come " + utente.getEmail(), Toast.LENGTH_LONG).show();
+            //creo un intento e gli aggiungo i dati che servono solo alla home dell'utente
+            Intent intent = new Intent();
+            intent.putExtra("Nome", utente.getNome());
+            intent.putExtra("Cognome", utente.getCognome());
+            intent.putExtra("Email", utente.getEmail());
 
-        //mi salvo nelle shared preference il ruolo e se è un pubblicatore mi salvo anche il comune
-        shpr.edit().putLong("utente_id", Long.parseLong(valori.get("utente_id"))).commit();
-
-        if(valori.get("ruolo").equals("sindaco")){
-            intent.setClass(getApplicationContext(), SindacoHome.class);
-            Toast.makeText(getApplicationContext(), "login come sindaco di: " + Long.parseLong(valori.get("comune_id")), Toast.LENGTH_LONG).show();
-            shpr.edit().putLong("comune_id", Long.parseLong(valori.get("comune_id"))).commit();
-            Log.d(TAG, "> login: utente_id = " + Long.parseLong(valori.get("utente_id")) + "; comune_id = " + Long.parseLong(valori.get("comune_id")));
-            //startActivity(intent);
-        }else{
-            intent.setClass(getApplicationContext(), UtenteHome.class);
-        }
-        startActivity(intent);
-    }
-
-    /*private void ingresso(Response<String> response, String email) {
-        Map<String, String> valoriRisposta;
-        //se si ha ottenuto un errore il body non sarà nel body ma in errorbody, quindi bisogna distinguere i due casi
-        if(response.code() == HttpsURLConnection.HTTP_OK){
-            Log.d(TAG, "ingresso: body = " + response.body());
-            valoriRisposta = new Gson().fromJson(response.body(), Map.class);
-        }else{
-            try {
-                valoriRisposta = new Gson().fromJson(response.errorBody().string(), Map.class);
-            } catch (IOException e) {
-                valoriRisposta = null;
-            }
-        }
-        if(valoriRisposta != null){
-            if(response.code() == HttpsURLConnection.HTTP_OK){
-                Intent intent = new Intent();
-                intent.putExtra("Nome", valoriRisposta.get("nome"));
-                intent.putExtra("Cognome", valoriRisposta.get("cognome"));
-                intent.putExtra("Email", email);
-
-                if(valoriRisposta.get("ruolo").equals("sindaco")){
-                    intent.setClass(getApplicationContext(), SindacoHome.class);
-                    intent.putExtra("Comune", 1);
-                    //startActivity(intent);
-                }else{
-                    intent.setClass(getApplicationContext(), UtenteHome.class);
-                }
-                startActivity(intent);
+            //aggiungo nelle shared preference i dati che serviranno per tutta l'applicazione
+            shpr.edit().putLong("utente_id", utente.getId()).commit();
+            if(utente.getRuolo().equals("sindaco")){
+                Toast.makeText(getApplicationContext(), "login come sindaco di: " + utente.getComune(), Toast.LENGTH_LONG).show();
+                intent.setClass(getApplicationContext(), SindacoHome.class);
+                shpr.edit().putLong("comune_id", utente.getComune()).commit();
             }else{
-                Toast.makeText(getApplicationContext(),valoriRisposta.get("errore"),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "login come utente ", Toast.LENGTH_LONG).show();
+                intent.setClass(getApplicationContext(), UtenteHome.class);
             }
+            startActivity(intent);
         }else{
-            Toast.makeText(getApplicationContext(), "Problema con la MAP",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "c'è stato un errore interno", Toast.LENGTH_LONG).show();
         }
-    }*/
+    }
 
     private void preferenzeCondivise() {
         if (shpr.getString("IP", "NOTFOUND").equals("NOTFOUND")){

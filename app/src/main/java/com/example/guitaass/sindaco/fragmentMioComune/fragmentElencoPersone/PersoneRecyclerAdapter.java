@@ -38,7 +38,7 @@ public class PersoneRecyclerAdapter extends RecyclerView.Adapter<PersoneRecycler
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.nome.setText(utenti.get(position).getNome());
         holder.cognome.setText(utenti.get(position).getCognome());
-        holder.status.setText(utenti.get(position).getStatus());
+        holder.status.setText(utenti.get(position).getRuolo());
 
         //caso base, in seguito si valuterà se ci sono apltre opzioni di visualizzazione
         holder.positivo.setText("promuovi");

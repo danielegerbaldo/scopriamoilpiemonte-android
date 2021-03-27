@@ -137,9 +137,9 @@ public class SindacoMioComune extends Fragment {
     
     private List<Utente> fakeUtenteRecyclerFill1(){
         List<Utente> list = new ArrayList<>();
-        list.add(new Utente(1, "Mario", "Rossi", "Co-Pubblicatore"));
+        /*list.add(new Utente(1, "Mario", "Rossi", "Co-Pubblicatore"));
         list.add(new Utente(2, "Alessia", "Bianchi", "Co-Pubblicatore"));
-        list.add(new Utente(3, "Carlo", "Martello", "Staff"));
+        list.add(new Utente(3, "Carlo", "Martello", "Staff"));*/
         return list;
     }
 
