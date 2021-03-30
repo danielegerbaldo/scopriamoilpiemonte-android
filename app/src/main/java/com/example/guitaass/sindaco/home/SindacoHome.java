@@ -7,7 +7,9 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,13 +30,18 @@ import java.util.List;
 
 public class SindacoHome extends AppCompatActivity {
 
+    private SharedPreferences shpr;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sindaco_home);
+        shpr = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Intent intent = getIntent();
+
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("HOME");
-        actionBar.setSubtitle(getIntent().getStringExtra("Username"));
+        actionBar.setTitle("HOME Sindaco");
+        actionBar.setSubtitle(getIntent().getStringExtra("Email"));
 
         TabLayout tabLayout = findViewById(R.id.top_tab_menu);
 
@@ -46,8 +53,8 @@ public class SindacoHome extends AppCompatActivity {
         //Imposto il tab che si vede di default
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill(), false);
-        fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();
+        FragmentEventi fragment = new FragmentEventi(3, shpr.getLong("utente_id", -1), shpr.getLong("comune_id", -1), 2,false);
+        fragmentTransaction.replace(R.id.fragment, fragment, "Eventi").addToBackStack(null).commit();
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
@@ -60,17 +67,14 @@ public class SindacoHome extends AppCompatActivity {
                     case 0:{    //iscrizioni del sindaco
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        //cleanFragmentManager(fragmentManager);
-                        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFill(), false);
-                        fragmentTransaction.replace(R.id.fragment, fragment, "Iscrizioni").addToBackStack(null).commit();
-                        //Toast.makeText(context, "iscrizioni", Toast.LENGTH_SHORT).show();
+                        FragmentEventi fragment = new FragmentEventi(3, shpr.getLong("utente_id", -1), shpr.getLong("comune_id", -1), 2,false);
+                        fragmentTransaction.replace(R.id.fragment, fragment, "Eventi").addToBackStack(null).commit();
                         break;
                     }
 
                     case 1:{    //mio comune
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        //cleanFragmentManager(fragmentManager);
                         SindacoMioComune fragment = new SindacoMioComune();
                         fragmentTransaction.replace(R.id.fragment, fragment, "MioComune").addToBackStack(null).commit();
                         //Toast.makeText(context, "mio comune", Toast.LENGTH_SHORT).show();
@@ -78,11 +82,16 @@ public class SindacoHome extends AppCompatActivity {
                     }
 
                     case 2:{    //eventi
+                        /*FragmentManager fragmentManager = getFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        FragmentEventi fragment = new FragmentEventi(2, shpr.getLong("utente_id", -1), shpr.getLong("comune_id", -1),false);
+                        fragmentTransaction.replace(R.id.fragment, fragment, "eventi").addToBackStack(null).commit();
+                        Toast.makeText(context, "evenoijiosdfgsgfgsddf", Toast.LENGTH_SHORT).show();*/
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        SindacoEventi fragment = new SindacoEventi();
+                        FragmentEventi fragment = new FragmentEventi(2, shpr.getLong("utente_id", -1), shpr.getLong("comune_id", -1),4 ,false);
                         fragmentTransaction.replace(R.id.fragment, fragment, "Eventi").addToBackStack(null).commit();
-                        Toast.makeText(context, "Eventi", Toast.LENGTH_SHORT).show();
+                        break;
                     }
 
                     case 3:{    //comuni seguiti
@@ -90,6 +99,7 @@ public class SindacoHome extends AppCompatActivity {
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         SindacoComuniSeguiti fragment = new SindacoComuniSeguiti();
                         fragmentTransaction.replace(R.id.fragment, fragment, "ComuniSeguiti").addToBackStack(null).commit();
+                        break;
                     }
 
                     case 4:{    //mappa
@@ -97,6 +107,7 @@ public class SindacoHome extends AppCompatActivity {
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                         SindacoMappa fragment = new SindacoMappa();
                         fragmentTransaction.replace(R.id.fragment, fragment, "Mappa").addToBackStack(null).commit();
+                        break;
                     }
                 }
             }
@@ -129,22 +140,14 @@ public class SindacoHome extends AppCompatActivity {
                 startActivity(intent);
                 break;
             }
+
+            case R.id.esci:{
+                shpr.edit().remove("utente_id").apply();
+                shpr.edit().remove("comune_id").apply();
+                finish();
+            }
         }
         return true;
-    }
-
-    private List<Evento> fakeRecyclerFill(){
-        List<Evento> list = new ArrayList<>();
-        list.add(new Evento((long)1, "prova", 10, 2,
-                true, "evento di prova fake per verificare il corretto funzionamento dell'app",
-                "occhio a u coviddi", null, null, 1, 1));
-        list.add(new Evento((long)2, "festa delle ciule piene", 100, 2,
-                false, "evento tipico di Milanere, sono svariate le edizioni di questo evento che ricorre da più di 50 anni dove i protagonisti sono sempre stati: produttori locali, bande e scuole. Punto di forza? Le ciule ripiene e le frittelle di mele!!!!",
-                "non adatto a chi non gradisce i prodotti piemontesi, neh?!", null, null, 2, 2));
-        list.add(new Evento((long)3, "Secondo Evento comune", 100, 5,
-                true, "evento di prova fake per verificare il corretto funzionamento della visualizzazione",
-                "occhio a u coviddi", null, null, 3, 1));
-        return list;
     }
 
 

@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,18 +26,39 @@ import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.R;
 import com.example.guitaass.dialogCondivisi.creaEvento.DialogCreaEvento;
 import com.example.guitaass.dialogCondivisi.creaSondaggio.DialogCreaSondaggio;
+import com.example.guitaass.retrofit.eventServer.RetrofitEventClient;
+import com.example.guitaass.sindaco.fragmentMioComune.SindacoMioComune;
 
 //import com.example.guitaass.fragmentCondivisi.FragmentCreaEvento.FragmentCreaEvento;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class FragmentEventi extends android.app.Fragment {
 
-    private List<Evento> fakeList;
+    private String TAG = "FragmentEventi";
+
     private boolean visibilitaBottoniBassi;
 
-    public FragmentEventi() {
+    private FragmentEventiRecyclerAdapter adapter;
+
+    private View view;
+
+    private List<Evento> listaEventi;
+
+    private int visualizzazione;
+    private long utenteID;
+    private long comuneID;
+
+    private Context context;
+
+    private int disposizioneBottoni;
+
+    /*public FragmentEventi() {
         fakeList = new ArrayList<>();
     }
 
@@ -49,6 +72,17 @@ public class FragmentEventi extends android.app.Fragment {
     public FragmentEventi(List<Evento> fakeList, boolean visibilitaBottoniBassi) {
         this.fakeList = fakeList;
         this.visibilitaBottoniBassi = visibilitaBottoniBassi;
+    }*/
+
+    public FragmentEventi(){}
+
+    @SuppressLint("ValidFragment")
+    public FragmentEventi(int visualizzazione, long utenteID, long comuneID, int disposizioneBottoni,boolean visibilitaBottoniBassi){
+        this.visualizzazione = visualizzazione;
+        this.utenteID = utenteID;
+        this.comuneID = comuneID;
+        this.visibilitaBottoniBassi = visibilitaBottoniBassi;
+        this.disposizioneBottoni = disposizioneBottoni;
     }
 
     @Override
@@ -61,7 +95,10 @@ public class FragmentEventi extends android.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sindaco_iscrizioni, container, false);
-        initRecyler(view);
+        //initRecyler(view);
+        context = view.getContext();
+        this.view = view;
+        dispatcher();
         return view;
     }
 
@@ -70,8 +107,90 @@ public class FragmentEventi extends android.app.Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    private void initRecyler(View view){
-        //TODO: per ora semplice con il caso banale, è poi da rendere più complesso
+    private void dispatcher(){
+        switch (visualizzazione){
+            case 1:{    //visualizzo tutti gli eventi del comune indicato
+                tuttiEventiComune();
+                break;
+            }
+            case 2:{    //visualizzo tutti gli eventi a cui non sono iscritto
+                tuttiEventiNonIscritto();
+            }
+            case 3:{    //visualizzo tutti i miei eventi del comune
+                iscrizioniUtente();
+                break;
+            }
+            case 4:{    //visualizzo gli eventi a cui sono iscritto
+                initRecyler(new ArrayList<>());
+                break;
+            }
+        }
+    }
+
+    private void tuttiEventiComune(){
+        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().ottieniEventiDiComune(comuneID);
+        call.enqueue(new Callback<List<Evento>>() {
+            @Override
+            public void onResponse(Call<List<Evento>> call, Response<List<Evento>> response) {
+                if (response.body() != null){
+                    initRecyler(response.body());
+                }else{
+                    Toast.makeText(context, "errore dal server ", Toast.LENGTH_SHORT).show();
+                    initRecyler(new ArrayList<>());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Evento>> call, Throwable t) {
+                Toast.makeText(context, "impossibile comunicare col server", Toast.LENGTH_SHORT).show();
+                initRecyler(new ArrayList<>());
+            }
+        });
+    }
+
+    private void tuttiEventiNonIscritto(){
+        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().ottieniEventiUtenteNonIscritto(utenteID);
+        call.enqueue(new Callback<List<Evento>>() {
+            @Override
+            public void onResponse(Call<List<Evento>> call, Response<List<Evento>> response) {
+                if (response.body() != null){
+                    initRecyler(response.body());
+                }else{
+                    Toast.makeText(context, "errore dal server ", Toast.LENGTH_SHORT).show();
+                    initRecyler(new ArrayList<>());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Evento>> call, Throwable t) {
+                Toast.makeText(context, "impossibile comunicare col server", Toast.LENGTH_SHORT).show();
+                initRecyler(new ArrayList<>());
+            }
+        });
+    }
+
+    private  void iscrizioniUtente(){
+        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().prenotazioniUtente(utenteID);
+        call.enqueue(new Callback<List<Evento>>() {
+            @Override
+            public void onResponse(Call<List<Evento>> call, Response<List<Evento>> response) {
+                if (response.body() != null){
+                    initRecyler(response.body());
+                }else{
+                    Toast.makeText(context, "errore dal server ", Toast.LENGTH_SHORT).show();
+                    initRecyler(new ArrayList<>());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Evento>> call, Throwable t) {
+                Toast.makeText(context, "impossibile comunicare col server", Toast.LENGTH_SHORT).show();
+                initRecyler(new ArrayList<>());
+            }
+        });
+    }
+
+    private void initRecyler(List<Evento> eventiIn){
 
         //elementi
         TextView messaggio = view.findViewById(R.id.messaggio);
@@ -81,13 +200,10 @@ public class FragmentEventi extends android.app.Fragment {
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        List<Evento> eventi = fakeList;
+        List<Evento> eventi = eventiIn;
 
-        /*FrameLayout fragmentContainerView = view.findViewById(R.id.fragment_crea_nuovo_evento_sondaggio);
+        Log.d(TAG, "initRecyler: visibilità bottoni = " + visibilitaBottoniBassi);
 
-        FrameLayout miaView = view.findViewById(R.id.fragment_sindaco_iscrizioni);
-
-        RelativeLayout relativeLayout = view.findViewById(R.id.relative_layout);*/
         if(visibilitaBottoniBassi){
             bottomLayout.setVisibility(View.VISIBLE);
             //gestisco i bottoni
@@ -124,13 +240,8 @@ public class FragmentEventi extends android.app.Fragment {
         if(eventi.size() > 0){
             recyclerView.setVisibility(View.VISIBLE);
             messaggio.setVisibility(View.GONE);
-            FragmentEventiRecyclerAdapter adapter;
-            if(visibilitaBottoniBassi){
-                //visualizza modifica e elimina
-                adapter = new FragmentEventiRecyclerAdapter(eventi, 1);
-            }else{
-                adapter = new FragmentEventiRecyclerAdapter(eventi, 2);
-            }
+
+            adapter = new FragmentEventiRecyclerAdapter(eventi, disposizioneBottoni);
 
             recyclerView.setAdapter(adapter);
         }else{
@@ -138,5 +249,8 @@ public class FragmentEventi extends android.app.Fragment {
             messaggio.setVisibility(View.VISIBLE);
         }
     }
+
+    public FragmentEventiRecyclerAdapter getRecyclerAdapter () {return  adapter;}
+
 
 }

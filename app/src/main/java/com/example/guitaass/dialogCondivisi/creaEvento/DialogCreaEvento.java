@@ -57,6 +57,8 @@ public class DialogCreaEvento extends Dialog {
     private long utenteID;
     private long comuneID;
 
+    private boolean modifica = false;
+
     private Evento evento = null;
 
     public DialogCreaEvento(@NonNull Context context) {
@@ -67,8 +69,7 @@ public class DialogCreaEvento extends Dialog {
     public DialogCreaEvento(@NonNull Context context, Evento evento) {
         super(context);
         this.evento = evento;
-        this.utenteID = shpr.getLong("utente_id", -1);
-        this.comuneID = shpr.getLong("comune_id",-1);
+        modifica = true;
     }
 
     public DialogCreaEvento(@NonNull Context context, int themeResId) {
@@ -86,6 +87,9 @@ public class DialogCreaEvento extends Dialog {
         setContentView(R.layout.dialog_crea_evento);
 
         shpr = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        this.utenteID = shpr.getLong("utente_id", -1);
+        this.comuneID = shpr.getLong("comune_id",-1);
         Log.d(TAG, "onCreate: shpr = " + shpr);
         //tutti gli elementi
         Button ottieniData = findViewById(R.id.nuovo_evento_data);
@@ -179,9 +183,6 @@ public class DialogCreaEvento extends Dialog {
                         null, dateUtil, utenteID, comuneID);
                 Call<Evento> call = RetrofitEventClient.getInstance(getContext()).getMyAPI().creaNuovoEvento(nuovoEvento);
 
-                Log.d(TAG, ">body richiesta nuovo evento: b: " + call.request().body().toString());
-                Log.d(TAG, "> nuovo evento: data: " + nuovoEvento.getData().toString());
-                Log.d(TAG, ">body richiesta nuovo evento: " + call.request().toString());
 
                 call.enqueue(new Callback<Evento>() {
                     @Override

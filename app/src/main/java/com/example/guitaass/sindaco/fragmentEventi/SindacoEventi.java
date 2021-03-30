@@ -17,8 +17,9 @@ public class SindacoEventi extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_sindaco_eventi, container, false);
-        return view;
+        //View view = inflater.inflate(R.layout.fragment_sindaco_eventi, container, false);
+        //return view;
+        return null;
     }
 }
 

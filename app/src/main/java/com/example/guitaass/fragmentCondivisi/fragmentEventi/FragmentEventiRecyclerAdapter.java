@@ -1,7 +1,10 @@
 package com.example.guitaass.fragmentCondivisi.fragmentEventi;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +19,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.R;
 import com.example.guitaass.dialogCondivisi.creaEvento.DialogCreaEvento;
+import com.example.guitaass.retrofit.eventServer.RetrofitEventClient;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<FragmentEventiRecyclerAdapter.ViewHolder> {
-    List<Evento> eventi;
+    private List<Evento> eventi;
+    private SharedPreferences shpr;
 
     private int posizioneEspansa = -1;  //in questa variabile mi salvo qual'è stata l'ultima posizione ad essere stata cliccata
 
@@ -29,7 +41,10 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
                                             1 = visualizzo tutto: testi = modifica, conferma, elimina
                                             2 = solo negativo = disdici prenotazione
                                             3 = negativo e modifica = modifica, elimina
+                                            4 = solo positivo = prenota
                                             */
+
+
 
 
     public FragmentEventiRecyclerAdapter(List<Evento> eventi, int visualizzazioneBottoni){
@@ -41,6 +56,7 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_list_evento_item, parent, false);
+        shpr = PreferenceManager.getDefaultSharedPreferences(view.getContext());
         ViewHolder holder = new ViewHolder(view);
         //Toast.makeText(view.getContext(), "num. eventi = " + eventi.size(), Toast.LENGTH_SHORT).show();
         return holder;
@@ -76,6 +92,8 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
             //imposto setto quali bottoni sono visibili
             switch (visualizzazioneBottoni){
                 case 1:{    //1 = visualizzo tutto: testi = modifica, conferma, elimina
+
+                    //questo verrà solo usato con le proposte di evento
                     holder.positivo.setVisibility(View.GONE);
                     holder.positivo.setText("conferma");
 
@@ -132,8 +150,7 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
                             confermaDisdici.setPositiveButton("SI", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    //TODO: da sostituire con la vera cancellazione
-                                    Toast.makeText(v.getContext(), "La tua prenotazione verrà disdetta", Toast.LENGTH_SHORT).show();
+                                    disdiciPrenotazione(v.getContext(), position);
                                 }
                             });
                             confermaDisdici.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -152,6 +169,52 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
                     holder.positivo.setVisibility(View.GONE);
                     holder.negativo.setVisibility(View.VISIBLE);
                     holder.modifica.setVisibility(View.VISIBLE);
+                    holder.negativo.setText("Elimina");
+                    holder.modifica.setText("Modifica");
+
+                    holder.negativo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            AlertDialog.Builder confermaDisdici = new AlertDialog.Builder(v.getContext());
+                            confermaDisdici.setTitle("Elimina evento");
+                            confermaDisdici.setMessage("Sei sicuro di voler eliminare questo evento?");
+                            confermaDisdici.setCancelable(false);
+                            confermaDisdici.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    eliminaEvento(v.getContext(), position);
+                                }
+                            });
+                            confermaDisdici.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            confermaDisdici.show();
+                        }
+                    });
+
+                    /*holder.modifica.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            modificaEvento(v.getContext(), position);
+                        }
+                    });*/
+                    break;
+                }
+
+                case 4:{        //4 = solo positovo per prenotare l'evento
+                    holder.positivo.setVisibility(View.VISIBLE);
+                    holder.negativo.setVisibility(View.GONE);
+                    holder.modifica.setVisibility(View.GONE);
+                    holder.positivo.setText("Prenota");
+                    holder.positivo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            prenota(v.getContext(), position);
+                        }
+                    });
                     break;
                 }
             }
@@ -269,6 +332,108 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
                 }
             });
         }
+
+    }
+
+    public List<Evento> getEventi() {
+        return eventi;
+    }
+
+    public void setEventi(List<Evento> eventi) {
+        this.eventi = eventi;
+    }
+
+    private void prenota (Context context, int position){
+        long eventoID  = eventi.get(position).getId();
+        long utenteID = shpr.getLong("utente_id", -1);
+        Map<String, Long> body = new HashMap<String, Long>();
+        body.put("utente_id", utenteID);
+        body.put("evento_id", eventoID);
+
+        Call<Map<String,String>> call = RetrofitEventClient.getInstance(context).getMyAPI().prenotaEvento(body);
+        call.enqueue(new Callback<Map<String,String>>() {
+            @Override
+            public void onResponse(Call<Map<String,String>> call, Response<Map<String,String>> response) {
+                if(response.isSuccessful()){
+                    Toast.makeText(context, "" + response.body().get("messaggio"), Toast.LENGTH_SHORT).show();
+                    eventi.remove(position);
+                    notifyItemRemoved(position);
+
+                }else{
+                    try {
+                        Toast.makeText(context, "errore: " + response.errorBody().string().toString(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        Toast.makeText(context, "errore: " + response.errorBody().toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String,String>> call, Throwable t) {
+                Toast.makeText(context, "non è stato possibile contattare il server", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void disdiciPrenotazione(Context context, int position){
+        long eventoID  = eventi.get(position).getId();
+        long utenteID = shpr.getLong("utente_id", -1);
+        Map<String, Long> body = new HashMap<String, Long>();
+        body.put("utente_id", utenteID);
+        body.put("evento_id", eventoID);
+        Call<Map<String, String>> call = RetrofitEventClient.getInstance(context).getMyAPI().disdiciPrenotazione(body);
+        call.enqueue(new Callback<Map<String, String>>() {
+            @Override
+            public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
+                if(response.isSuccessful()){
+                    Toast.makeText(context, "" + response.body().get("messaggio"), Toast.LENGTH_SHORT).show();
+                    eventi.remove(position);
+                    notifyItemRemoved(position);
+
+                }else{
+                    try {
+                        Toast.makeText(context, "errore: " + response.errorBody().string().toString(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        Toast.makeText(context, "errore: " + response.errorBody().toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, String>> call, Throwable t) {
+                Toast.makeText(context, "non è stato possibile contattare il server", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void eliminaEvento(Context context, int position) {
+        long eventoID = eventi.get(position).getId();
+        Call<Map<String,String>> call = RetrofitEventClient.getInstance(context).getMyAPI().eliminaEvento(eventoID);
+        call.enqueue(new Callback<Map<String, String>>() {
+            @Override
+            public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
+                if(response.isSuccessful()){
+                    Toast.makeText(context, "" + response.body().get("messaggio"), Toast.LENGTH_SHORT).show();
+                    eventi.remove(position);
+                    notifyItemRemoved(position);
+
+                }else{
+                    try {
+                        Toast.makeText(context, "errore: " + response.errorBody().string().toString(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        Toast.makeText(context, "errore: " + response.errorBody().toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, String>> call, Throwable t) {
+                Toast.makeText(context, "non è stato possibile contattare il server", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void modificaEvento(Context context, int position){
 
     }
 }

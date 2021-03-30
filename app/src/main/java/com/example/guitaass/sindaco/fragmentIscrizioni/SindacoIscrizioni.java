@@ -71,6 +71,7 @@ public class SindacoIscrizioni extends android.app.Fragment {
         }
     }
 
+
     private List<Evento> fakeRecyclerFill(){
         List<Evento> list = new ArrayList<>();
         list.add(new Evento((long)1, "prova", 10, 2,

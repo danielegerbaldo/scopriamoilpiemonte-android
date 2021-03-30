@@ -5,11 +5,16 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -17,16 +22,34 @@ import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.DOM.Utente;
 import com.example.guitaass.R;
 import com.example.guitaass.fragmentCondivisi.fragmentEventi.FragmentEventi;
+import com.example.guitaass.fragmentCondivisi.fragmentEventi.FragmentEventiRecyclerAdapter;
+import com.example.guitaass.retrofit.eventServer.RetrofitEventClient;
 import com.example.guitaass.sindaco.fragmentMioComune.fragmentElencoPersone.FragmentElencoPersone;
 import com.example.guitaass.sindaco.fragmentMioComune.fragmentInfo.FragmentInfo;
 import com.example.guitaass.sindaco.fragmentMioComune.fragmentSegnalazioni.FragmentSegnalazioni;
 import com.google.android.material.tabs.TabLayout;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static android.content.Intent.getIntent;
+
 @SuppressLint("ValidFragment")
 public class SindacoMioComune extends Fragment {
+
+    private SharedPreferences shpr;
+
+    private String TAG = "SindacoMioComune";
+
+    private Context context;
+
+    private String email = "";
 
     //@RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -53,15 +76,17 @@ public class SindacoMioComune extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         TabLayout tabLayout = view.findViewById(R.id.mio_comune_tab_layout);
-        Context context = view.getContext();
+        context = view.getContext();
+        shpr = PreferenceManager.getDefaultSharedPreferences(context);
+
         //Log.d("FragmentMioComune", "***********context = " + context);
 
         //imposto il tab che si vede di default
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFillComune(), true);
+        FragmentEventi fragment = new FragmentEventi(1, shpr.getLong("utente_id", -1), shpr.getLong("comune_id", -1), 3,true);
         fragmentTransaction.replace(R.id.fragment2, fragment, "EventiComune").addToBackStack(null).commit();
-
+        //aggiornaElencoEventiComune(fragment);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -72,8 +97,9 @@ public class SindacoMioComune extends Fragment {
                     case 0:{    //eventi
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        FragmentEventi fragment = new FragmentEventi(fakeRecyclerFillComune(), true);
+                        FragmentEventi fragment = new FragmentEventi(1, shpr.getLong("utente_id", -1), shpr.getLong("comune_id", -1),3, true);
                         fragmentTransaction.replace(R.id.fragment2, fragment, "EventiComune").addToBackStack(null).commit();
+                        //aggiornaElencoEventiComune(fragment);
                         break;
                     }
 
@@ -122,17 +148,6 @@ public class SindacoMioComune extends Fragment {
 
             }
         });
-    }
-
-    private List<Evento> fakeRecyclerFillComune(){
-        List<Evento> list = new ArrayList<>();
-        list.add(new Evento((long)1, "prova", 10, 2,
-                true, "evento di prova fake per verificare il corretto funzionamento dell'app",
-                "occhio a u coviddi", null, null, 1, 1));
-        list.add(new Evento((long)3, "Secondo Evento comune", 100, 5,
-                true, "evento di prova fake per verificare il corretto funzionamento della visualizzazione",
-                "occhio a u coviddi", null, null, 3, 1));
-        return list;
     }
     
     private List<Utente> fakeUtenteRecyclerFill1(){

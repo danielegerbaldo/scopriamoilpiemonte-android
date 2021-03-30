@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.example.guitaass.AsynkTask.RequestNetAsync;
 import com.example.guitaass.DOM.Utente;
-import com.example.guitaass.classiComode.RichiestaLogin;
 import com.example.guitaass.retrofit.API;
 import com.example.guitaass.retrofit.RetrofitClient;
 import com.example.guitaass.sindaco.home.SindacoAiuto;
@@ -109,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                             //se il body è nullo, vuol dire che il server non ha mandato un HTTP.OK, quindi lo troviamo in bodyError
                             Log.d(TAG, "onResponse: body: " + response.body().toString());
                             Log.d(TAG, "onResponse: body: " + response.body().getRuolo());
-                            ingresso(response.body());
+                            ingresso(response.body(), emailEdit, passwordEdit);
                         }else {
                             Toast.makeText(getApplicationContext(), "email o password errati", Toast.LENGTH_LONG).show();
                         }
@@ -130,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void ingresso(Utente utente){
+    private void ingresso(Utente utente, EditText email, EditText password){
         if(utente != null){
             //Toast.makeText(getApplicationContext(), "login come " + utente.getEmail(), Toast.LENGTH_LONG).show();
             //creo un intento e gli aggiungo i dati che servono solo alla home dell'utente
@@ -140,15 +139,18 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("Email", utente.getEmail());
 
             //aggiungo nelle shared preference i dati che serviranno per tutta l'applicazione
-            shpr.edit().putLong("utente_id", utente.getId()).commit();
+            shpr.edit().putLong("utente_id", utente.getId()).apply();
             if(utente.getRuolo().equals("sindaco")){
                 Toast.makeText(getApplicationContext(), "login come sindaco di: " + utente.getComune(), Toast.LENGTH_LONG).show();
                 intent.setClass(getApplicationContext(), SindacoHome.class);
-                shpr.edit().putLong("comune_id", utente.getComune()).commit();
+                shpr.edit().putLong("comune_id", utente.getComune()).apply();
+                //shpr.edit().putString("email", utente.getEmail());
             }else{
                 Toast.makeText(getApplicationContext(), "login come utente ", Toast.LENGTH_LONG).show();
                 intent.setClass(getApplicationContext(), UtenteHome.class);
             }
+            email.setText("");
+            password.setText("");
             startActivity(intent);
         }else{
             Toast.makeText(getApplicationContext(), "c'è stato un errore interno", Toast.LENGTH_LONG).show();
@@ -161,12 +163,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public String generaBody(String email, String password){
-        Gson gson = new Gson();
-        String json = gson.toJson(new RichiestaLogin(password, email));
-        Log.d("JSON", "¡¡¡¡¡¡¡json: " + json);
-        return json;
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
