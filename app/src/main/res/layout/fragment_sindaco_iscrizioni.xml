@@ -7,62 +7,32 @@
     android:layout_height="match_parent"
     tools:context=".sindaco.fragmentIscrizioni.SindacoIscrizioni">
 
-    <!--<FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/fragment_crea_nuovo_evento_sondaggio"
-        android:visibility="gone"/>-->
-
-    <!-- TODO: Update blank fragment layout -->
-    <!--<LinearLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
         <TextView
             android:id="@+id/messaggio"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Non sei iscritto ad alcun evento"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:id="@+id/recycler_view"
-            android:visibility="gone"/>
-    </LinearLayout>-->
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/messaggio"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Non sei iscritto ad alcun evento"
-            android:visibility="gone"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/recycler_view"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignBottom="@+id/bottom_layout"/>
+            android:layout_marginTop="0dp"
+            android:layout_weight="2"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:orientation="horizontal"
             android:id="@+id/bottom_layout"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp">
+            android:layout_marginRight="5dp"
+            android:layout_weight="0">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -91,29 +61,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!--<LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal"
-            android:id="@+id/bottom_layout">
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Crea nuovo Evento"
-                android:layout_alignParentBottom="true"/>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Crea nuova proposta"
-                android:layout_alignParentBottom="true"/>
-
-        </LinearLayout>-->
-
-
-    </RelativeLayout>
+    </LinearLayout>
 
 </FrameLayout>
 
