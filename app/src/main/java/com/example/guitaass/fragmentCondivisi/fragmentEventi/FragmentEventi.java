@@ -4,8 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,22 +62,6 @@ public class FragmentEventi extends android.app.Fragment {
 
     private int disposizioneBottoni;
 
-    /*public FragmentEventi() {
-        fakeList = new ArrayList<>();
-    }
-
-    @SuppressLint("ValidFragment")
-    public FragmentEventi(List<Evento> fakeList) {
-        this.fakeList = fakeList;
-        visibilitaBottoniBassi = false;
-    }
-
-    @SuppressLint("ValidFragment")
-    public FragmentEventi(List<Evento> fakeList, boolean visibilitaBottoniBassi) {
-        this.fakeList = fakeList;
-        this.visibilitaBottoniBassi = visibilitaBottoniBassi;
-    }*/
-
     public FragmentEventi(){}
 
     @SuppressLint("ValidFragment")
@@ -107,17 +95,25 @@ public class FragmentEventi extends android.app.Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
+
+    //i metodi che seguono servono per creare un nuovo recycler adapetr e quindi creare una nuova lista di eventi
+
     private void dispatcher(){
+        ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setTitle("Caricamento eventi");
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("caricamento della lista degli eventi dal server");
+        progressDialog.show();
         switch (visualizzazione){
             case 1:{    //visualizzo tutti gli eventi del comune indicato
-                tuttiEventiComune();
+                tuttiEventiComune(progressDialog);
                 break;
             }
             case 2:{    //visualizzo tutti gli eventi a cui non sono iscritto
-                tuttiEventiNonIscritto();
+                tuttiEventiNonIscritto(progressDialog);
             }
             case 3:{    //visualizzo tutti i miei eventi del comune
-                iscrizioniUtente();
+                iscrizioniUtente(progressDialog);
                 break;
             }
             case 4:{    //visualizzo gli eventi a cui sono iscritto
@@ -127,8 +123,17 @@ public class FragmentEventi extends android.app.Fragment {
         }
     }
 
-    private void tuttiEventiComune(){
+    private void tuttiEventiComune(ProgressDialog progressDialog){
         Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().ottieniEventiDiComune(comuneID);
+        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "annulla", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //se clicco annulla annullo la chiamata e passo una lista vuota all'adapter
+                call.cancel();
+                adapter.aggiornaLista(new ArrayList<>());
+                progressDialog.dismiss();
+            }
+        });
         call.enqueue(new Callback<List<Evento>>() {
             @Override
             public void onResponse(Call<List<Evento>> call, Response<List<Evento>> response) {
@@ -138,18 +143,29 @@ public class FragmentEventi extends android.app.Fragment {
                     Toast.makeText(context, "errore dal server ", Toast.LENGTH_SHORT).show();
                     initRecyler(new ArrayList<>());
                 }
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<List<Evento>> call, Throwable t) {
                 Toast.makeText(context, "impossibile comunicare col server", Toast.LENGTH_SHORT).show();
                 initRecyler(new ArrayList<>());
+                progressDialog.dismiss();
             }
         });
     }
 
-    private void tuttiEventiNonIscritto(){
+    private void tuttiEventiNonIscritto(ProgressDialog progressDialog){
         Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().ottieniEventiUtenteNonIscritto(utenteID);
+        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "annulla", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //se clicco annulla annullo la chiamata e passo una lista vuota all'adapter
+                call.cancel();
+                adapter.aggiornaLista(new ArrayList<>());
+                progressDialog.dismiss();
+            }
+        });
         call.enqueue(new Callback<List<Evento>>() {
             @Override
             public void onResponse(Call<List<Evento>> call, Response<List<Evento>> response) {
@@ -159,18 +175,29 @@ public class FragmentEventi extends android.app.Fragment {
                     Toast.makeText(context, "errore dal server ", Toast.LENGTH_SHORT).show();
                     initRecyler(new ArrayList<>());
                 }
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<List<Evento>> call, Throwable t) {
                 Toast.makeText(context, "impossibile comunicare col server", Toast.LENGTH_SHORT).show();
                 initRecyler(new ArrayList<>());
+                progressDialog.dismiss();
             }
         });
     }
 
-    private  void iscrizioniUtente(){
+    private  void iscrizioniUtente(ProgressDialog progressDialog){
         Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().prenotazioniUtente(utenteID);
+        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "annulla", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //se clicco annulla annullo la chiamata e passo una lista vuota all'adapter
+                call.cancel();
+                adapter.aggiornaLista(new ArrayList<>());
+                progressDialog.dismiss();
+            }
+        });
         call.enqueue(new Callback<List<Evento>>() {
             @Override
             public void onResponse(Call<List<Evento>> call, Response<List<Evento>> response) {
@@ -180,12 +207,14 @@ public class FragmentEventi extends android.app.Fragment {
                     Toast.makeText(context, "errore dal server ", Toast.LENGTH_SHORT).show();
                     initRecyler(new ArrayList<>());
                 }
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<List<Evento>> call, Throwable t) {
                 Toast.makeText(context, "impossibile comunicare col server", Toast.LENGTH_SHORT).show();
                 initRecyler(new ArrayList<>());
+                progressDialog.dismiss();
             }
         });
     }
@@ -215,7 +244,12 @@ public class FragmentEventi extends android.app.Fragment {
                     //dialogEvento.setCancelable(true);
                     dialogEvento.setCanceledOnTouchOutside(false);
                     dialogEvento.show();
-
+                    dialogEvento.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            aggiornaEventiAdapter();
+                        }
+                    });
                 }
             });
 
@@ -241,7 +275,7 @@ public class FragmentEventi extends android.app.Fragment {
             recyclerView.setVisibility(View.VISIBLE);
             messaggio.setVisibility(View.GONE);
 
-            adapter = new FragmentEventiRecyclerAdapter(eventi, disposizioneBottoni);
+            adapter = new FragmentEventiRecyclerAdapter(eventi, disposizioneBottoni, this);
 
             recyclerView.setAdapter(adapter);
         }else{
@@ -250,7 +284,134 @@ public class FragmentEventi extends android.app.Fragment {
         }
     }
 
-    public FragmentEventiRecyclerAdapter getRecyclerAdapter () {return  adapter;}
+    //i metodi che seguono servono per aggiornare la lista di un adapter già esistente
+
+    public void aggiornaEventiAdapter(){
+        Log.d(TAG, "aggiornaEventiAdapter: richiesta di aggiornamento, visualizzazione = " + visualizzazione);
+        //aggiungo qui il dialog del caricamento che verrà poi eliminato dal metodo che carica i dati
+        ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setTitle("Caricamento eventi");
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("caricamento della lista degli eventi dal server");
+        progressDialog.show();
+        switch (visualizzazione){
+            case 1:{    //visualizzo tutti gli eventi del comune indicato
+                aggiornaTuttiEventiComune(progressDialog);
+                break;
+            }
+            case 2:{    //visualizzo tutti gli eventi a cui non sono iscritto
+                aggiornaTuttiEventiNonIscritto(progressDialog);
+            }
+            case 3:{    //visualizzo tutti i miei eventi del comune
+                aggiornaIscrizioniUtente(progressDialog);
+                break;
+            }
+            case 4:{    //visualizzo gli eventi a cui sono iscritto
+                //initRecyler(new ArrayList<>());
+                break;
+            }
+        }
+    }
+
+    private void aggiornaTuttiEventiComune(ProgressDialog progressDialog){
+        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().ottieniEventiDiComune(comuneID);
+        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "annulla", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //se clicco annulla annullo la chiamata e passo una lista vuota all'adapter
+                call.cancel();
+                adapter.aggiornaLista(new ArrayList<>());
+                progressDialog.dismiss();
+            }
+        });
+        call.enqueue(new Callback<List<Evento>>() {
+            @Override
+            public void onResponse(Call<List<Evento>> call, Response<List<Evento>> response) {
+                if (response.body() != null){
+                    adapter.aggiornaLista(response.body());
+                }else{
+                    Toast.makeText(context, "errore dal server ", Toast.LENGTH_SHORT).show();
+                    adapter.aggiornaLista(new ArrayList<>());
+                }
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<List<Evento>> call, Throwable t) {
+                Toast.makeText(context, "impossibile comunicare col server", Toast.LENGTH_SHORT).show();
+                adapter.aggiornaLista(new ArrayList<>());
+                progressDialog.dismiss();
+            }
+        });
+
+    }
+
+    private void aggiornaTuttiEventiNonIscritto(ProgressDialog progressDialog){
+        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().ottieniEventiUtenteNonIscritto(utenteID);
+        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "annulla", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //se clicco annulla annullo la chiamata e passo una lista vuota all'adapter
+                call.cancel();
+                adapter.aggiornaLista(new ArrayList<>());
+                progressDialog.dismiss();
+            }
+        });
+        call.enqueue(new Callback<List<Evento>>() {
+            @Override
+            public void onResponse(Call<List<Evento>> call, Response<List<Evento>> response) {
+                if (response.body() != null){
+                    adapter.aggiornaLista(response.body());
+                }else{
+                    Toast.makeText(context, "errore dal server ", Toast.LENGTH_SHORT).show();
+                    adapter.aggiornaLista(new ArrayList<>());
+                }
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<List<Evento>> call, Throwable t) {
+                Toast.makeText(context, "impossibile comunicare col server", Toast.LENGTH_SHORT).show();
+                adapter.aggiornaLista(new ArrayList<>());
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    private void aggiornaIscrizioniUtente(ProgressDialog progressDialog){
+        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().prenotazioniUtente(utenteID);
+        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "annulla", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //se clicco annulla annullo la chiamata e passo una lista vuota all'adapter
+                call.cancel();
+                adapter.aggiornaLista(new ArrayList<>());
+                progressDialog.dismiss();
+            }
+        });
+        call.enqueue(new Callback<List<Evento>>() {
+            @Override
+            public void onResponse(Call<List<Evento>> call, Response<List<Evento>> response) {
+                if (response.body() != null){
+                    adapter.aggiornaLista(response.body());
+                }else{
+                    Toast.makeText(context, "errore dal server ", Toast.LENGTH_SHORT).show();
+                    adapter.aggiornaLista(new ArrayList<>());
+                }
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<List<Evento>> call, Throwable t) {
+                Toast.makeText(context, "impossibile comunicare col server", Toast.LENGTH_SHORT).show();
+                adapter.aggiornaLista(new ArrayList<>());
+                progressDialog.dismiss();
+            }
+        });
+
+    }
+
+    //public FragmentEventiRecyclerAdapter getRecyclerAdapter () {return  adapter;}
 
 
 }

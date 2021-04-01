@@ -112,7 +112,7 @@ public class DialogCreaEvento extends Dialog {
             descrizioneInput.setText(evento.getDescrizione());
             notaInput.setText(evento.getNote());
             if(evento.getData() != null){
-                ottieniData.setText(evento.getData().toString());
+                ottieniData.setText(evento.getData().getDay() + "/" + evento.getData().getMonth() + "/" + (evento.getData().getYear() + 1900));
             }
 
         }
@@ -181,28 +181,52 @@ public class DialogCreaEvento extends Dialog {
                         Integer.parseInt(maxPersoneInput.getText().toString()), 0, streamingBox.isChecked(),
                         descrizioneInput.getText().toString(), notaInput.getText().toString(),
                         null, dateUtil, utenteID, comuneID);
-                Call<Evento> call = RetrofitEventClient.getInstance(getContext()).getMyAPI().creaNuovoEvento(nuovoEvento);
 
+                if(modifica){
+                    //nel caso in cui il dialog serva per modificare un evento bisogna fare una certa chiamata al server
+                    Call<Evento> call = RetrofitEventClient.getInstance(getContext()).getMyAPI().modificaEvento(evento.getId(), nuovoEvento);
+                    call.enqueue(new Callback<Evento>() {
+                        @Override
+                        public void onResponse(Call<Evento> call, Response<Evento> response) {
+                            if(response.isSuccessful()){
+                                Toast.makeText(getContext(), "Evento modificato con successo: " + response.body().getId(), Toast.LENGTH_LONG).show();
+                                dismiss();
+                            }else{
+                                Toast.makeText(getContext(), "C'è stato un errore col server" , Toast.LENGTH_LONG).show();
+                                Log.d(TAG, "onResponse: error: " + call.request().body());
+                            }
 
-                call.enqueue(new Callback<Evento>() {
-                    @Override
-                    public void onResponse(Call<Evento> call, Response<Evento> response) {
-                        if(response.isSuccessful()){
-                            Toast.makeText(getContext(), "Nuovo evento creato: " + response.body().getId(), Toast.LENGTH_LONG).show();
-                            dismiss();
-                        }else{
-                            Toast.makeText(getContext(), "C'è stato un errore col server" , Toast.LENGTH_LONG).show();
-                            Log.d(TAG, "onResponse: error: " + call.request().body());
                         }
 
-                    }
+                        @Override
+                        public void onFailure(Call<Evento> call, Throwable t) {
+                            Toast.makeText(getContext(), "Non sono riuscito a comunicare col server", Toast.LENGTH_LONG).show();
 
-                    @Override
-                    public void onFailure(Call<Evento> call, Throwable t) {
-                        Toast.makeText(getContext(), "Non sono riuscito a comunicare col server", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }else{
+                    //nel caso in cui il dialog serva per creare un nuovo evento
+                    Call<Evento> call = RetrofitEventClient.getInstance(getContext()).getMyAPI().creaNuovoEvento(nuovoEvento);
+                    call.enqueue(new Callback<Evento>() {
+                        @Override
+                        public void onResponse(Call<Evento> call, Response<Evento> response) {
+                            if(response.isSuccessful()){
+                                Toast.makeText(getContext(), "Nuovo evento creato: " + response.body().getId(), Toast.LENGTH_LONG).show();
+                                dismiss();
+                            }else{
+                                Toast.makeText(getContext(), "C'è stato un errore col server" , Toast.LENGTH_LONG).show();
+                                Log.d(TAG, "onResponse: error: " + call.request().body());
+                            }
 
-                    }
-                });
+                        }
+
+                        @Override
+                        public void onFailure(Call<Evento> call, Throwable t) {
+                            Toast.makeText(getContext(), "Non sono riuscito a comunicare col server", Toast.LENGTH_LONG).show();
+
+                        }
+                    });
+                }
             }
         });
     }

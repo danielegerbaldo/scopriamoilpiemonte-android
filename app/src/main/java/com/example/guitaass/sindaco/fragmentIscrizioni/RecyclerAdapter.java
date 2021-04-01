@@ -84,6 +84,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         //rendo cliccabile il corpo dell'elemento nella lista
     }
 
+
     @Override
     public int getItemCount() {
         return eventi.size();
@@ -173,4 +174,5 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         }
 
     }
+
 }

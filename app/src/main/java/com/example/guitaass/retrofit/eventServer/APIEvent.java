@@ -14,6 +14,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -39,4 +40,7 @@ public interface APIEvent {
 
     @DELETE("deleteById/{eventoID}")
     Call<Map<String, String>> eliminaEvento (@Path("eventoID") long eventoID);
+
+    @PUT("aggiorna/{id}")
+    Call<Evento> modificaEvento (@Path("id") long id, @Body Evento evento);
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<FragmentEventiRecyclerAdapter.ViewHolder> {
+    private String TAG = "FragmentEventiRecyclerAdapter";
+
     private List<Evento> eventi;
     private SharedPreferences shpr;
 
@@ -44,12 +47,13 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
                                             4 = solo positivo = prenota
                                             */
 
+    private FragmentEventi chiamante;
 
 
-
-    public FragmentEventiRecyclerAdapter(List<Evento> eventi, int visualizzazioneBottoni){
+    public FragmentEventiRecyclerAdapter(List<Evento> eventi, int visualizzazioneBottoni, FragmentEventi chiamante){
         this.eventi = eventi;
         this.visualizzazioneBottoni = visualizzazioneBottoni;
+        this.chiamante = chiamante;
     }
 
     @NonNull
@@ -65,15 +69,16 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         //in questo metodo viene riempita la lista
-        holder.nomeEvento.setText(eventi.get(position).getNome());
-        holder.comune.setText("" +  eventi.get(position).getComune());
-        holder.descrizione.setText(eventi.get(position).getDescrizione());
-        holder.note.setText(eventi.get(position).getNote());
-        holder.partecipanti.setText("" + eventi.get(position).getPartecipanti());
+        Evento evento = eventi.get(position);
+        holder.nomeEvento.setText(evento.getNome());
+        holder.comune.setText("" +  evento.getComune());
+        holder.descrizione.setText(evento.getDescrizione());
+        holder.note.setText(evento.getNote());
+        holder.partecipanti.setText("" + evento.getPartecipanti());
         holder.indirizzo.setText("boh");
-        holder.streaming.setText("" + eventi.get(position).isStreaming());
-        holder.data.setText("" + eventi.get(position).getData());
-        holder.id.setText("" + eventi.get(position).getId());
+        holder.streaming.setText("" + evento.isStreaming());
+        holder.data.setText("" + evento.getData().getDay() + "/" + evento.getData().getMonth() + "/" + (evento.getData().getYear() + 1900));
+        holder.id.setText("" + evento.getId());
 
 
         //rende visibile o meno la parte extra
@@ -84,15 +89,24 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
             holder.modifica.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DialogCreaEvento modificaEvento = new DialogCreaEvento(v.getContext(), eventi.get(position));
+                    DialogCreaEvento modificaEvento = new DialogCreaEvento(v.getContext(), evento);
                     modificaEvento.show();
+                    Log.d(TAG, "cliccato modifica, prima della chiamata aggiorna: ");
+                    modificaEvento.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            chiamante.aggiornaEventiAdapter();
+                        }
+                    });
+
+                    Log.d(TAG, "cliccato modifica, dopo della chiamata aggiorna: ");
                 }
             });
 
             //imposto setto quali bottoni sono visibili
             switch (visualizzazioneBottoni){
                 case 1:{    //1 = visualizzo tutto: testi = modifica, conferma, elimina
-
+                    /*
                     //questo verrà solo usato con le proposte di evento
                     holder.positivo.setVisibility(View.GONE);
                     holder.positivo.setText("conferma");
@@ -128,7 +142,7 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
                             });
                             confermaCancellazione.show();
                         }
-                    });
+                    });*/
                     break;
                 }
 
@@ -194,13 +208,6 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
                             confermaDisdici.show();
                         }
                     });
-
-                    /*holder.modifica.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            modificaEvento(v.getContext(), position);
-                        }
-                    });*/
                     break;
                 }
 
@@ -356,9 +363,9 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
             public void onResponse(Call<Map<String,String>> call, Response<Map<String,String>> response) {
                 if(response.isSuccessful()){
                     Toast.makeText(context, "" + response.body().get("messaggio"), Toast.LENGTH_SHORT).show();
-                    eventi.remove(position);
-                    notifyItemRemoved(position);
-
+                    //eventi.remove(position);
+                    //notifyItemRemoved(position);
+                    chiamante.aggiornaEventiAdapter();
                 }else{
                     try {
                         Toast.makeText(context, "errore: " + response.errorBody().string().toString(), Toast.LENGTH_SHORT).show();
@@ -387,9 +394,9 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
             public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
                 if(response.isSuccessful()){
                     Toast.makeText(context, "" + response.body().get("messaggio"), Toast.LENGTH_SHORT).show();
-                    eventi.remove(position);
-                    notifyItemRemoved(position);
-
+                    //eventi.remove(position);
+                    //notifyItemRemoved(position);
+                    chiamante.aggiornaEventiAdapter();
                 }else{
                     try {
                         Toast.makeText(context, "errore: " + response.errorBody().string().toString(), Toast.LENGTH_SHORT).show();
@@ -414,8 +421,9 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
             public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
                 if(response.isSuccessful()){
                     Toast.makeText(context, "" + response.body().get("messaggio"), Toast.LENGTH_SHORT).show();
-                    eventi.remove(position);
-                    notifyItemRemoved(position);
+                    //eventi.remove(position);
+                    //notifyItemRemoved(position);
+                    chiamante.aggiornaEventiAdapter();
 
                 }else{
                     try {
@@ -433,7 +441,10 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
         });
     }
 
-    private void modificaEvento(Context context, int position){
-
+    public void aggiornaLista(List<Evento> nuovaLista){
+        Log.d(TAG, "aggiornaLista: numero vecchi eventi: " + eventi.size());
+        Log.d(TAG, "aggiornaLista: numero nuovi eventi: " + nuovaLista.size());
+        eventi = nuovaLista;
+        notifyDataSetChanged();
     }
 }

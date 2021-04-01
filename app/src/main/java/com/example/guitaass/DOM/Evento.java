@@ -1,5 +1,8 @@
 package com.example.guitaass.DOM;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
 public class Evento {
@@ -30,6 +33,24 @@ public class Evento {
         this.proprietario = proprietario;
         this.comune = comune;
     }
+
+    protected Evento(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
+        nome = in.readString();
+        numMaxPartecipanti = in.readInt();
+        partecipanti = in.readInt();
+        streaming = in.readByte() != 0;
+        descrizione = in.readString();
+        note = in.readString();
+        proprietario = in.readLong();
+        comune = in.readLong();
+    }
+
+
 
     public Long getId() {
         return id;
