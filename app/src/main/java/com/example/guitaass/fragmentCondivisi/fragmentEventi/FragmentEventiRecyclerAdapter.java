@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -75,6 +78,7 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
         holder.descrizione.setText(evento.getDescrizione());
         holder.note.setText(evento.getNote());
         holder.partecipanti.setText("" + evento.getPartecipanti());
+        holder.posti.setText("" + evento.getNumMaxPartecipanti());
         holder.indirizzo.setText("boh");
         holder.streaming.setText("" + evento.isStreaming());
         holder.data.setText("" + evento.getData().getDay() + "/" + evento.getData().getMonth() + "/" + (evento.getData().getYear() + 1900));
@@ -216,12 +220,26 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
                     holder.negativo.setVisibility(View.GONE);
                     holder.modifica.setVisibility(View.GONE);
                     holder.positivo.setText("Prenota");
-                    holder.positivo.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            prenota(v.getContext(), position);
-                        }
-                    });
+                    /* controllo della disponibilità di posti;
+                    se non ci sono più posti disponibili il tasto viene disattivato e appare un toast
+                    altrimenti è possibile prenotare
+                    */
+                    if (evento.getPartecipanti() >= evento.getNumMaxPartecipanti()) {
+                        holder.positivo.setBackgroundColor(Color.GRAY);
+                        holder.positivo.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(v.getContext(), "non ci sono posti disponibili!" , Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    } else {
+                        holder.positivo.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                prenota(v.getContext(), position);
+                            }
+                        });
+                    }
                     break;
                 }
             }
@@ -264,6 +282,7 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
         TextView descrizione;
         TextView note;
         TextView partecipanti;
+        TextView posti;
         TextView indirizzo;
         TextView streaming;
         TextView data;
@@ -283,6 +302,7 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
             descrizione = itemView.findViewById(R.id.descrizione);
             note = itemView.findViewById(R.id.note);
             partecipanti = itemView.findViewById(R.id.partecipanti);
+            posti = itemView.findViewById(R.id.posti);
             indirizzo = itemView.findViewById(R.id.indirizzo);
             streaming = itemView.findViewById(R.id.streaming);
             data = itemView.findViewById(R.id.data);
