@@ -77,6 +77,11 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
         holder.comune.setText("" +  evento.getComune());
         holder.descrizione.setText(evento.getDescrizione());
         holder.note.setText(evento.getNote());
+        if(evento.getTipoEvento() != null){
+            holder.tipoEvento.setText(evento.getTipoEvento().getNome());
+        }else{
+            holder.tipoEvento.setText("null");
+        }
         holder.partecipanti.setText("" + evento.getPartecipanti());
         holder.posti.setText("" + evento.getNumMaxPartecipanti());
         holder.indirizzo.setText("boh");
@@ -281,6 +286,7 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
         TextView comune;
         TextView descrizione;
         TextView note;
+        TextView tipoEvento;
         TextView partecipanti;
         TextView posti;
         TextView indirizzo;
@@ -301,6 +307,7 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
             comune = itemView.findViewById(R.id.comune);
             descrizione = itemView.findViewById(R.id.descrizione);
             note = itemView.findViewById(R.id.note);
+            tipoEvento = itemView.findViewById(R.id.tipo_evento);
             partecipanti = itemView.findViewById(R.id.partecipanti);
             posti = itemView.findViewById(R.id.posti);
             indirizzo = itemView.findViewById(R.id.indirizzo);

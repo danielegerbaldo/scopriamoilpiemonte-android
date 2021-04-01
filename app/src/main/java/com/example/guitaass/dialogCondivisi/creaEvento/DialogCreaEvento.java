@@ -28,14 +28,17 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.example.guitaass.DOM.Evento;
+import com.example.guitaass.DOM.TipoEvento;
 import com.example.guitaass.R;
 import com.example.guitaass.retrofit.eventServer.RetrofitEventClient;
+import com.example.guitaass.retrofit.tipoEventoServer.RetrofitTipoEventoClient;
 import com.google.gson.Gson;
 
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -103,6 +106,39 @@ public class DialogCreaEvento extends Dialog {
         Spinner tipoEventoInput = findViewById(R.id.tipo_evento);
         CheckBox streamingBox = findViewById(R.id.streaming);
 
+        TipoEvento tipoEventoSelezionato = null;    //rappresenta il tipo di evento selezionato dallo spinner
+
+        //creo l'adapter impostandogli inizialmente una lista vuota di tipo di evento
+        SpinnerAdapterTipoEvento spinnerAdapter  = new SpinnerAdapterTipoEvento(getContext(), new ArrayList<>() );
+        //setto l'adapter allo spinner
+        tipoEventoInput.setAdapter(spinnerAdapter);
+        //mostro un progress dialog
+        ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setTitle("Caricamento tipi di evento");
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("caricamento della lista dei tipi di evento dal server");
+        progressDialog.show();
+        //chiamata al server che mi fa ottenere l'elenco dei tipi di evento
+        Call<List<TipoEvento>> call = RetrofitTipoEventoClient.getInstance(getContext()).getMyAPI().ottieniListaTipiEvento();
+        call.enqueue(new Callback<List<TipoEvento>>() {
+            @Override
+            public void onResponse(Call<List<TipoEvento>> call, Response<List<TipoEvento>> response) {
+                //aggiorno l'elenco di tipi dello spinner
+                spinnerAdapter.aggiorna(response.body());
+                progressDialog.dismiss();
+                if(evento != null){
+                    //settare il valore di default dello spinner
+                    tipoEventoInput.setSelection(spinnerAdapter.getPositionOf(evento.getTipoEvento()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<TipoEvento>> call, Throwable t) {
+                progressDialog.dismiss();
+            }
+        });
+
+        //quando si vuole modificare un evento, in questo if viene riempito il dialog con i valori dell'evento da modificare
         if(evento != null){
             TextView titolo = findViewById(R.id.titolo_dialog_crea_evento);
             titolo.setText("Procedura per modificare l'evento: " + evento.getId());
@@ -116,14 +152,6 @@ public class DialogCreaEvento extends Dialog {
             }
 
         }
-
-        //riempimento fake di tipoevento
-        ArrayList<String> tipiFake = new ArrayList<>();
-        tipiFake.add("Musicale");
-        tipiFake.add("Gastronomico");
-        tipiFake.add("Festa");
-        SpinnerAdapterTipoEvento spinnerAdapter = new SpinnerAdapterTipoEvento(getContext(), tipiFake);
-        tipoEventoInput.setAdapter(spinnerAdapter);
 
 
         //ottenere la data
@@ -180,7 +208,8 @@ public class DialogCreaEvento extends Dialog {
                 Evento nuovoEvento = new Evento(null, nomeInput.getText().toString(),
                         Integer.parseInt(maxPersoneInput.getText().toString()), 0, streamingBox.isChecked(),
                         descrizioneInput.getText().toString(), notaInput.getText().toString(),
-                        null, dateUtil, utenteID, comuneID);
+                        (TipoEvento) tipoEventoInput.getSelectedItem(), dateUtil, utenteID, comuneID);
+                Log.d(TAG, "onClick: evento creato di tipo: " + nuovoEvento.getTipoEvento().getNome());
 
                 if(modifica){
                     //nel caso in cui il dialog serva per modificare un evento bisogna fare una certa chiamata al server
@@ -231,10 +260,4 @@ public class DialogCreaEvento extends Dialog {
         });
     }
 
-    /*@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_sindaco_iscrizioni, container, false);
-        return view;
-    }*/
 }

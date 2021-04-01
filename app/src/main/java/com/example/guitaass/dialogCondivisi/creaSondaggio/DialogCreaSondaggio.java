@@ -68,7 +68,7 @@ public class DialogCreaSondaggio extends Dialog {
         tipiFake.add("Musicale");
         tipiFake.add("Gastronomico");
         tipiFake.add("Festa");
-        SpinnerAdapterTipoEvento spinnerAdapter = new SpinnerAdapterTipoEvento(getContext(), tipiFake);
+        SpinnerAdapterTipoEvento spinnerAdapter = new SpinnerAdapterTipoEvento(getContext(), new ArrayList<>());
         tipoEventoInput.setAdapter(spinnerAdapter);
 
         //ottenere la data
