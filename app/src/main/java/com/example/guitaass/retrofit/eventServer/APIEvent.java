@@ -26,14 +26,23 @@ public interface APIEvent {
     @GET("eventi-comune/{comune}")
     Call<List<Evento>> ottieniEventiDiComune(@Path("comune") long comune);
 
+    @GET("eventi-comune-non-scaduti/{comune}")
+    Call<List<Evento>> ottieniEventiDiComuneNonScaduti(@Path("comune") long comune);
+
     @GET("eventi-non-iscritto/{utenteID}")
     Call<List<Evento>> ottieniEventiUtenteNonIscritto(@Path("utenteID" )long utenteID);
+
+    @GET("eventi-non-iscritto-non-scaduti/{utenteID}")
+    Call<List<Evento>> ottieniEventiUtenteNonIscrittoNonScaduti(@Path("utenteID" )long utenteID);
 
     @POST("prenota")
     Call<Map<String,String>> prenotaEvento(@Body Map<String, Long> body);
 
     @GET("iscrizione-utente/{utenteID}")
     Call<List<Evento>> prenotazioniUtente(@Path("utenteID") long utenteID);
+
+    @GET("iscrizione-utente-non-scaduti/{utenteID}")
+    Call<List<Evento>> prenotazioniUtenteNonScadute(@Path("utenteID") long utenteID);
 
     @POST("disiscrivi")
     Call<Map<String,String>> disdiciPrenotazione(@Body Map<String, Long> body);

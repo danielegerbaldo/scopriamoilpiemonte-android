@@ -124,7 +124,7 @@ public class FragmentEventi extends android.app.Fragment {
     }
 
     private void tuttiEventiComune(ProgressDialog progressDialog){
-        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().ottieniEventiDiComune(comuneID);
+        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().ottieniEventiDiComuneNonScaduti(comuneID);
         progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "annulla", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -156,7 +156,7 @@ public class FragmentEventi extends android.app.Fragment {
     }
 
     private void tuttiEventiNonIscritto(ProgressDialog progressDialog){
-        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().ottieniEventiUtenteNonIscritto(utenteID);
+        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().ottieniEventiUtenteNonIscrittoNonScaduti(utenteID);
         progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "annulla", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -188,7 +188,7 @@ public class FragmentEventi extends android.app.Fragment {
     }
 
     private  void iscrizioniUtente(ProgressDialog progressDialog){
-        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().prenotazioniUtente(utenteID);
+        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().prenotazioniUtenteNonScadute(utenteID);
         progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "annulla", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -271,17 +271,18 @@ public class FragmentEventi extends android.app.Fragment {
         //bottomLayout.setVisibility(View.GONE);
 
 
-        if(eventi.size() > 0){
-            recyclerView.setVisibility(View.VISIBLE);
+        if(eventi.size() >  0){
             messaggio.setVisibility(View.GONE);
-
-            adapter = new FragmentEventiRecyclerAdapter(eventi, disposizioneBottoni, this);
-
-            recyclerView.setAdapter(adapter);
         }else{
-            recyclerView.setVisibility(View.GONE);
             messaggio.setVisibility(View.VISIBLE);
+
         }
+
+        Log.d(TAG, "initRecyler: bottoni sotto: " + (bottomLayout.getVisibility() == View.VISIBLE));
+
+        adapter = new FragmentEventiRecyclerAdapter(eventi, disposizioneBottoni, this);
+
+        recyclerView.setAdapter(adapter);
     }
 
     //i metodi che seguono servono per aggiornare la lista di un adapter già esistente
@@ -314,7 +315,7 @@ public class FragmentEventi extends android.app.Fragment {
     }
 
     private void aggiornaTuttiEventiComune(ProgressDialog progressDialog){
-        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().ottieniEventiDiComune(comuneID);
+        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().ottieniEventiDiComuneNonScaduti(comuneID);
         progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "annulla", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -347,7 +348,7 @@ public class FragmentEventi extends android.app.Fragment {
     }
 
     private void aggiornaTuttiEventiNonIscritto(ProgressDialog progressDialog){
-        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().ottieniEventiUtenteNonIscritto(utenteID);
+        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().ottieniEventiUtenteNonIscrittoNonScaduti(utenteID);
         progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "annulla", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -379,7 +380,7 @@ public class FragmentEventi extends android.app.Fragment {
     }
 
     private void aggiornaIscrizioniUtente(ProgressDialog progressDialog){
-        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().prenotazioniUtente(utenteID);
+        Call<List<Evento>> call = RetrofitEventClient.getInstance(view.getContext()).getMyAPI().prenotazioniUtenteNonScadute(utenteID);
         progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "annulla", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

@@ -26,6 +26,8 @@ import com.example.guitaass.dialogCondivisi.creaEvento.DialogCreaEvento;
 import com.example.guitaass.retrofit.eventServer.RetrofitEventClient;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +88,9 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
         holder.posti.setText("" + evento.getNumMaxPartecipanti());
         holder.indirizzo.setText("boh");
         holder.streaming.setText("" + evento.isStreaming());
-        holder.data.setText("" + evento.getData().getDay() + "/" + evento.getData().getMonth() + "/" + (evento.getData().getYear() + 1900));
+        /*"" + evento.getData().getDay() + "/" + evento.getData().getMonth() + "/" + (evento.getData().getYear() + 1900)*/
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        holder.data.setText(formatter.format(evento.getData()));
         holder.id.setText("" + evento.getId());
 
 

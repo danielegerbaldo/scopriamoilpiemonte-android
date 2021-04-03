@@ -3,6 +3,8 @@ package com.example.guitaass.DOM;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.Gson;
+
 import java.util.Date;
 
 public class Evento {
@@ -138,5 +140,9 @@ public class Evento {
 
     public void setComune(long comune) {
         this.comune = comune;
+    }
+
+    public String toString(){
+        return new Gson().toJson(this);
     }
 }

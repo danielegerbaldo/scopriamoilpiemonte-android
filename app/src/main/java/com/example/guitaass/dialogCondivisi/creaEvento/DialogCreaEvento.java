@@ -159,6 +159,7 @@ public class DialogCreaEvento extends Dialog {
         anno = calendar.get(Calendar.YEAR);
         mese = calendar.get(Calendar.MONTH);
         giorno = calendar.get(Calendar.DAY_OF_MONTH);
+        //Date data;
         //bottone che genera un datapicker
         ottieniData.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
@@ -171,6 +172,8 @@ public class DialogCreaEvento extends Dialog {
                         anno = annoN;
                         mese = meseN;
                         giorno = giornoN;
+                        calendar.set(anno,mese,giorno);
+                        //data = Date.valueOf()
                     }
                 }, anno, mese, giorno);
                 datePickerDialog.show();
@@ -194,10 +197,12 @@ public class DialogCreaEvento extends Dialog {
                 progressDialog.setTitle("Creazione");
                 progressDialog.setMessage("sto contattando il server per creare il tuo evento");
                 progressDialog.show();*/
+                //java.util.Date dateUtil = calendar.getTime();
                 java.util.Date dateUtil = calendar.getTime();
-                Log.d(TAG, "util.Date: " + dateUtil + "; anno = " + dateUtil.getYear());
-                java.sql.Date dateSql = new java.sql.Date(dateUtil.getTime());
-                Log.d(TAG, "sql.Date.toString: " + dateSql.toString() + "; anno = " + dateSql.getYear());
+                        //Date.valueOf(anno + "/" + mese + "/" + giorno);
+                Log.d(TAG, "util.Date: " + dateUtil + "; anno = " + dateUtil.getYear() + "; giorno = " + dateUtil.getDay());
+                //java.sql.Date dateSql = new java.sql.Date(dateUtil.getTime());
+                //Log.d(TAG, "sql.Date.toString: " + dateSql.toString() + "; anno = " + dateSql.getYear());
                 Log.d(TAG, "y: " + anno + "; m: " + mese + "; d: " + giorno);
 
                 utenteID = shpr.getLong("utente_id", -1);
@@ -209,7 +214,7 @@ public class DialogCreaEvento extends Dialog {
                         Integer.parseInt(maxPersoneInput.getText().toString()), 0, streamingBox.isChecked(),
                         descrizioneInput.getText().toString(), notaInput.getText().toString(),
                         (TipoEvento) tipoEventoInput.getSelectedItem(), dateUtil, utenteID, comuneID);
-                Log.d(TAG, "onClick: evento creato di tipo: " + nuovoEvento.getTipoEvento().getNome());
+                Log.d(TAG, "onClick: evento creato: " + nuovoEvento.toString());
 
                 if(modifica){
                     //nel caso in cui il dialog serva per modificare un evento bisogna fare una certa chiamata al server
@@ -241,6 +246,7 @@ public class DialogCreaEvento extends Dialog {
                         public void onResponse(Call<Evento> call, Response<Evento> response) {
                             if(response.isSuccessful()){
                                 Toast.makeText(getContext(), "Nuovo evento creato: " + response.body().getId(), Toast.LENGTH_LONG).show();
+                                Log.d(TAG, "onResponse; evento creato: " + response.body().toString());
                                 dismiss();
                             }else{
                                 Toast.makeText(getContext(), "C'è stato un errore col server" , Toast.LENGTH_LONG).show();
