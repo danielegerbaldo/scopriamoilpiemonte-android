@@ -140,14 +140,16 @@ public class MainActivity extends AppCompatActivity {
 
             //aggiungo nelle shared preference i dati che serviranno per tutta l'applicazione
             shpr.edit().putLong("utente_id", utente.getId()).apply();
+            intent.setClass(getApplicationContext(), SindacoHome.class);
             if(utente.getRuolo().equals("sindaco")){
                 Toast.makeText(getApplicationContext(), "login come sindaco di: " + utente.getComune(), Toast.LENGTH_LONG).show();
-                intent.setClass(getApplicationContext(), SindacoHome.class);
                 shpr.edit().putLong("comune_id", utente.getComune()).apply();
+                shpr.edit().putString("ruolo", "sindaco").apply();
                 //shpr.edit().putString("email", utente.getEmail());
             }else{
                 Toast.makeText(getApplicationContext(), "login come utente ", Toast.LENGTH_LONG).show();
-                intent.setClass(getApplicationContext(), UtenteHome.class);
+                shpr.edit().putString("ruolo", "utente").apply();
+                //intent.setClass(getApplicationContext(), UtenteHome.class);
             }
             email.setText("");
             password.setText("");

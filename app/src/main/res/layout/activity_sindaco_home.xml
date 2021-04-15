@@ -15,34 +15,37 @@
         app:tabMode="scrollable">
 
         <com.google.android.material.tabs.TabItem
+            android:id="@+id/tab_iscrizioni"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Iscrizioni" />
 
         <com.google.android.material.tabs.TabItem
+            android:id="@+id/tab_mio_comune"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Mio Comune" />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/tabItem"
+            android:id="@+id/tab_eventi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Eventi" />
 
         <com.google.android.material.tabs.TabItem
+            android:id="@+id/tab_comuni_seguiti"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Comuni seguiti" />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/tabItem2"
+            android:id="@+id/tab_mappa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Mappa" />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/tabItem5"
+            android:id="@+id/tab_comuni"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Comuni" />

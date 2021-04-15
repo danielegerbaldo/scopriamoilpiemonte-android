@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GUITAASS">
-        <activity android:name=".ImpostazioniAvanzate"></activity>
+        <activity android:name=".utente.Impostazioni"></activity>
+        <activity android:name=".ImpostazioniAvanzate" />
         <activity android:name=".utente.home.CambiaComune" />
         <activity
             android:name=".sindaco.home.SindacoAiuto"

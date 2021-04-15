@@ -23,6 +23,7 @@ import com.example.guitaass.sindaco.fragmentComuniSeguiti.SindacoComuniSeguiti;
 import com.example.guitaass.sindaco.fragmentEventi.SindacoEventi;
 import com.example.guitaass.sindaco.fragmentMappa.SindacoMappa;
 import com.example.guitaass.sindaco.fragmentMioComune.SindacoMioComune;
+import com.example.guitaass.utente.Impostazioni;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -40,10 +41,18 @@ public class SindacoHome extends AppCompatActivity {
         Intent intent = getIntent();
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("HOME Sindaco");
+
         actionBar.setSubtitle(getIntent().getStringExtra("Email"));
 
         TabLayout tabLayout = findViewById(R.id.top_tab_menu);
+
+        String ruolo = shpr.getString("ruolo", "utente");
+        if(ruolo.equals("utente")){
+            actionBar.setTitle("HOME Utente");
+            tabLayout.removeTabAt(1);
+        }else{
+            actionBar.setTitle("HOME Sindaco");
+        }
 
 
         final Context context = this;
@@ -62,54 +71,89 @@ public class SindacoHome extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 //Log.d("onTabSelected", "****>>>elemento selezionato: " + tab.getPosition());
                 int selezionato = tab.getPosition();
-                //Log.d("onTabSelected", "elemento selezionato: " + selezionato);
-                switch (selezionato){
-                    case 0:{    //iscrizioni del sindaco
-                        FragmentManager fragmentManager = getFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        FragmentEventi fragment = new FragmentEventi(3, shpr.getLong("utente_id", -1), shpr.getLong("comune_id", -1), 2,false);
-                        fragmentTransaction.replace(R.id.fragment, fragment, "Eventi").addToBackStack(null).commit();
-                        break;
+
+                //per rendere l'app una applicazione singola senza distinzione tra utente e sindaco
+                if(ruolo.equals("utente")){
+                    //sono un utente normale
+                    switch (selezionato){
+                        case 0:{    //iscrizioni del sindaco
+                            FragmentManager fragmentManager = getFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            FragmentEventi fragment = new FragmentEventi(3, shpr.getLong("utente_id", -1), shpr.getLong("comune_id", -1), 2,false);
+                            fragmentTransaction.replace(R.id.fragment, fragment, "Eventi").addToBackStack(null).commit();
+                            break;
+                        }
+                        case 1:{    //eventi
+                            FragmentManager fragmentManager = getFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            FragmentEventi fragment = new FragmentEventi(2, shpr.getLong("utente_id", -1), shpr.getLong("comune_id", -1),4 ,false);
+                            fragmentTransaction.replace(R.id.fragment, fragment, "Eventi").addToBackStack(null).commit();
+                            break;
+                        }
+
+                        case 2:{    //comuni seguiti
+                            FragmentManager fragmentManager = getFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            SindacoComuniSeguiti fragment = new SindacoComuniSeguiti();
+                            fragmentTransaction.replace(R.id.fragment, fragment, "ComuniSeguiti").addToBackStack(null).commit();
+                            break;
+                        }
+
+                        case 3:{    //mappa
+                            FragmentManager fragmentManager = getFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            SindacoMappa fragment = new SindacoMappa();
+                            fragmentTransaction.replace(R.id.fragment, fragment, "Mappa").addToBackStack(null).commit();
+                            break;
+                        }
+                    }
+                }else{
+                    //sono un utente che può pubblicare
+                    switch (selezionato){
+                        case 0:{    //iscrizioni del sindaco
+                            FragmentManager fragmentManager = getFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            FragmentEventi fragment = new FragmentEventi(3, shpr.getLong("utente_id", -1), shpr.getLong("comune_id", -1), 2,false);
+                            fragmentTransaction.replace(R.id.fragment, fragment, "Eventi").addToBackStack(null).commit();
+                            break;
+                        }
+
+                        case 1:{    //mio comune
+                            FragmentManager fragmentManager = getFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            SindacoMioComune fragment = new SindacoMioComune();
+                            fragmentTransaction.replace(R.id.fragment, fragment, "MioComune").addToBackStack(null).commit();
+                            //Toast.makeText(context, "mio comune", Toast.LENGTH_SHORT).show();
+                            break;
+                        }
+
+                        case 2:{    //eventi
+                            FragmentManager fragmentManager = getFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            FragmentEventi fragment = new FragmentEventi(2, shpr.getLong("utente_id", -1), shpr.getLong("comune_id", -1),4 ,false);
+                            fragmentTransaction.replace(R.id.fragment, fragment, "Eventi").addToBackStack(null).commit();
+                            break;
+                        }
+
+                        case 3:{    //comuni seguiti
+                            FragmentManager fragmentManager = getFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            SindacoComuniSeguiti fragment = new SindacoComuniSeguiti();
+                            fragmentTransaction.replace(R.id.fragment, fragment, "ComuniSeguiti").addToBackStack(null).commit();
+                            break;
+                        }
+
+                        case 4:{    //mappa
+                            FragmentManager fragmentManager = getFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            SindacoMappa fragment = new SindacoMappa();
+                            fragmentTransaction.replace(R.id.fragment, fragment, "Mappa").addToBackStack(null).commit();
+                            break;
+                        }
                     }
 
-                    case 1:{    //mio comune
-                        FragmentManager fragmentManager = getFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        SindacoMioComune fragment = new SindacoMioComune();
-                        fragmentTransaction.replace(R.id.fragment, fragment, "MioComune").addToBackStack(null).commit();
-                        //Toast.makeText(context, "mio comune", Toast.LENGTH_SHORT).show();
-                        break;
-                    }
-
-                    case 2:{    //eventi
-                        /*FragmentManager fragmentManager = getFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        FragmentEventi fragment = new FragmentEventi(2, shpr.getLong("utente_id", -1), shpr.getLong("comune_id", -1),false);
-                        fragmentTransaction.replace(R.id.fragment, fragment, "eventi").addToBackStack(null).commit();
-                        Toast.makeText(context, "evenoijiosdfgsgfgsddf", Toast.LENGTH_SHORT).show();*/
-                        FragmentManager fragmentManager = getFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        FragmentEventi fragment = new FragmentEventi(2, shpr.getLong("utente_id", -1), shpr.getLong("comune_id", -1),4 ,false);
-                        fragmentTransaction.replace(R.id.fragment, fragment, "Eventi").addToBackStack(null).commit();
-                        break;
-                    }
-
-                    case 3:{    //comuni seguiti
-                        FragmentManager fragmentManager = getFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        SindacoComuniSeguiti fragment = new SindacoComuniSeguiti();
-                        fragmentTransaction.replace(R.id.fragment, fragment, "ComuniSeguiti").addToBackStack(null).commit();
-                        break;
-                    }
-
-                    case 4:{    //mappa
-                        FragmentManager fragmentManager = getFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        SindacoMappa fragment = new SindacoMappa();
-                        fragmentTransaction.replace(R.id.fragment, fragment, "Mappa").addToBackStack(null).commit();
-                        break;
-                    }
                 }
+                //Log.d("onTabSelected", "elemento selezionato: " + selezionato);
             }
 
             @Override
@@ -145,6 +189,11 @@ public class SindacoHome extends AppCompatActivity {
                 shpr.edit().remove("utente_id").apply();
                 shpr.edit().remove("comune_id").apply();
                 finish();
+            }
+
+            case R.id.impostazioni:{
+                Intent intent = new Intent(getBaseContext(), Impostazioni.class);
+                startActivity(intent);
             }
         }
         return true;
