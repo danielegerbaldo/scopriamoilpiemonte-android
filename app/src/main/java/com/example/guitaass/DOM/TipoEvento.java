@@ -6,7 +6,7 @@ public class TipoEvento {
     private String descrizione;
 
     public TipoEvento(Long id, String nome, String descrizione) {
-        this.id = id;
+        this.id = null;
         this.nome = nome;
         this.descrizione = descrizione;
     }

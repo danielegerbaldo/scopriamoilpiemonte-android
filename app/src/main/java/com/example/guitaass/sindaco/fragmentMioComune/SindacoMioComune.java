@@ -106,7 +106,7 @@ public class SindacoMioComune extends Fragment {
                     case 1:{    //personale
                         FragmentManager fragmentManager = getFragmentManager();
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        FragmentElencoPersone fragment = new FragmentElencoPersone(fakeUtenteRecyclerFill1());
+                        FragmentElencoPersone fragment = new FragmentElencoPersone(/*fakeUtenteRecyclerFill1()*/true);
                         fragmentTransaction.replace(R.id.fragment2, fragment, "Personale").addToBackStack(null).commit();
                         break;
                     }

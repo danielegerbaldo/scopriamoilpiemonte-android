@@ -40,7 +40,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         //holder.codice.setText(String.valueOf(utenti.get(position).getId()));
         holder.nome.setText(utenti.get(position).getNome());
         holder.cognome.setText(utenti.get(position).getCognome());
-        holder.status.setText(utenti.get(position).getRuolo());
+        holder.status.setText(utenti.get(position).getRuoli().get(0).getAuthority());
 
         //rende visibile o meno la parte extra
         if(position == posizioneEspansa){

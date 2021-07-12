@@ -19,7 +19,7 @@ public class RetrofitTipoEventoClient {
         this.context = context;
         SharedPreferences shpr = PreferenceManager.getDefaultSharedPreferences(context);
         String ip = shpr.getString("IP", "localhost");
-        String BASE_URL = "http://" + ip + ":8080/api/v1/tipo-evento/";
+        String BASE_URL = "http://" + ip + "/api/v1/tipo-evento/";
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

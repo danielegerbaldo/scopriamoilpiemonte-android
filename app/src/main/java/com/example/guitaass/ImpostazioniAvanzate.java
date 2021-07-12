@@ -24,7 +24,7 @@ public class ImpostazioniAvanzate extends AppCompatActivity {
         conferma.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                prefs.edit().putString("IP", editIP.getText().toString()).commit();
+                prefs.edit().putString("IP", editIP.getText().toString()).apply();
                 finish();
             }
         });

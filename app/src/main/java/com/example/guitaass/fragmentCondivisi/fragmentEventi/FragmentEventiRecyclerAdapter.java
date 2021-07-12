@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,11 +22,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.guitaass.DOM.Evento;
 import com.example.guitaass.R;
 import com.example.guitaass.dialogCondivisi.creaEvento.DialogCreaEvento;
+import com.example.guitaass.retrofit.eventServer.IscriviEvento;
 import com.example.guitaass.retrofit.eventServer.RetrofitEventClient;
+import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +56,11 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
 
     private FragmentEventi chiamante;
 
+    private GoogleMap map;
+
+    private Context context;
+    private View view;
+
 
     public FragmentEventiRecyclerAdapter(List<Evento> eventi, int visualizzazioneBottoni, FragmentEventi chiamante){
         this.eventi = eventi;
@@ -67,6 +74,8 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_list_evento_item, parent, false);
         shpr = PreferenceManager.getDefaultSharedPreferences(view.getContext());
         ViewHolder holder = new ViewHolder(view);
+        context = view.getContext();
+        this.view = view;
         //Toast.makeText(view.getContext(), "num. eventi = " + eventi.size(), Toast.LENGTH_SHORT).show();
         return holder;
     }
@@ -92,6 +101,8 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         holder.data.setText(formatter.format(evento.getData()));
         holder.id.setText("" + evento.getId());
+
+
 
 
         //rende visibile o meno la parte extra
@@ -305,6 +316,8 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
         ConstraintLayout extraInfo;
         ConstraintLayout itemBody;
 
+        MapView mapView;
+
         public ViewHolder(@NonNull View itemView){
             super(itemView);
             nomeEvento = itemView.findViewById(R.id.nome_evento);
@@ -325,6 +338,11 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
 
             extraInfo = itemView.findViewById(R.id.extra_info);
             itemBody = itemView.findViewById(R.id.item_body);
+
+            mapView = itemView.findViewById(R.id.web_view);
+
+            //mapView.onCreate(new Bundle());
+            //mapView.getMapAsync(view);
 
             descrizione.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -388,12 +406,18 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
         body.put("utente_id", utenteID);
         body.put("evento_id", eventoID);
 
-        Call<Map<String,String>> call = RetrofitEventClient.getInstance(context).getMyAPI().prenotaEvento(body);
-        call.enqueue(new Callback<Map<String,String>>() {
+        IscriviEvento iscrizioneRequest =  new IscriviEvento(eventoID, utenteID);
+        Toast.makeText(context, "eventoId = " + iscrizioneRequest.getEvento() + " utenteId = " + iscrizioneRequest.getUtente(), Toast.LENGTH_SHORT).show();
+
+        Call<Evento> call = RetrofitEventClient
+                .getInstance(context)
+                .getMyAPI()
+                .prenotaEvento(iscrizioneRequest, "Bearer " + shpr.getString("token", ""));
+        call.enqueue(new Callback<Evento>() {
             @Override
-            public void onResponse(Call<Map<String,String>> call, Response<Map<String,String>> response) {
+            public void onResponse(Call<Evento> call, Response<Evento> response) {
                 if(response.isSuccessful()){
-                    Toast.makeText(context, "" + response.body().get("messaggio"), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Iscritto all'evento " + response.body().getId(), Toast.LENGTH_SHORT).show();
                     //eventi.remove(position);
                     //notifyItemRemoved(position);
                     chiamante.aggiornaEventiAdapter();
@@ -407,7 +431,7 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
             }
 
             @Override
-            public void onFailure(Call<Map<String,String>> call, Throwable t) {
+            public void onFailure(Call<Evento> call, Throwable t) {
                 Toast.makeText(context, "non è stato possibile contattare il server", Toast.LENGTH_SHORT).show();
             }
         });
@@ -419,7 +443,11 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
         Map<String, Long> body = new HashMap<String, Long>();
         body.put("utente_id", utenteID);
         body.put("evento_id", eventoID);
-        Call<Map<String, String>> call = RetrofitEventClient.getInstance(context).getMyAPI().disdiciPrenotazione(body);
+        //IscrizioneRequest iscrizione = new IscrizioneRequest(eventoID, utenteID);
+        Call<Map<String, String>> call = RetrofitEventClient
+                .getInstance(context)
+                .getMyAPI()
+                .disdiciPrenotazione(body, "Bearer " + shpr.getString("token", "") );
         call.enqueue(new Callback<Map<String, String>>() {
             @Override
             public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
@@ -445,13 +473,18 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
     }
 
     private void eliminaEvento(Context context, int position) {
+        Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!eliminaEvento: sono passato qua ");
         long eventoID = eventi.get(position).getId();
-        Call<Map<String,String>> call = RetrofitEventClient.getInstance(context).getMyAPI().eliminaEvento(eventoID);
-        call.enqueue(new Callback<Map<String, String>>() {
+        Call<String> call = RetrofitEventClient
+                .getInstance(context)
+                .getMyAPI()
+                .eliminaEvento(eventoID, "Bearer " + shpr.getString("token", ""));
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
-                if(response.isSuccessful()){
-                    Toast.makeText(context, "" + response.body().get("messaggio"), Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d(TAG, "Elimina evento: codice risposta = " + response.code());
+                if(response.code() == 200){
+                    Toast.makeText(context, "" + response.body(), Toast.LENGTH_SHORT).show();
                     //eventi.remove(position);
                     //notifyItemRemoved(position);
                     chiamante.aggiornaEventiAdapter();
@@ -466,8 +499,10 @@ public class FragmentEventiRecyclerAdapter extends RecyclerView.Adapter<Fragment
             }
 
             @Override
-            public void onFailure(Call<Map<String, String>> call, Throwable t) {
-                Toast.makeText(context, "non è stato possibile contattare il server", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<String> call, Throwable t) {
+                //TODO: BUG LIBRERIA, scoprire perché va qui anche se il server da ok
+                //Toast.makeText(context, "non è stato possibile contattare il server", Toast.LENGTH_SHORT).show();
+                chiamante.aggiornaEventiAdapter();
             }
         });
     }

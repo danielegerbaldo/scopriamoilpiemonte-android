@@ -189,11 +189,13 @@ public class SindacoHome extends AppCompatActivity {
                 shpr.edit().remove("utente_id").apply();
                 shpr.edit().remove("comune_id").apply();
                 finish();
+                break;
             }
 
             case R.id.impostazioni:{
                 Intent intent = new Intent(getBaseContext(), Impostazioni.class);
                 startActivity(intent);
+                break;
             }
         }
         return true;

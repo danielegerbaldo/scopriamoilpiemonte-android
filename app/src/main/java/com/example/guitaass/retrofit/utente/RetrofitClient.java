@@ -1,4 +1,4 @@
-package com.example.guitaass.retrofit;
+package com.example.guitaass.retrofit.utente;
 
 
 import android.content.Context;
@@ -19,7 +19,7 @@ public class RetrofitClient {
         String ip = shpr.getString("IP", "localhost");
 
 
-        String BASE_URL = "http://" + ip + ":9090/api/v1/utente/";
+        String BASE_URL = "http://" + ip + "/api/v1/";
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

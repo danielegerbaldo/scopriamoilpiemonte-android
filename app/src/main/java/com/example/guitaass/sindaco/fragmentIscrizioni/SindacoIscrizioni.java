@@ -74,12 +74,13 @@ public class SindacoIscrizioni extends android.app.Fragment {
 
     private List<Evento> fakeRecyclerFill(){
         List<Evento> list = new ArrayList<>();
-        list.add(new Evento((long)1, "prova", 10, 2,
+        /*list.add(new Evento((long)1, "prova", 10, 2,
                 true, "evento di prova fake per verificare il corretto funzionamento dell'app",
                 "occhio a u coviddi", null, null, 1, 1));
         list.add(new Evento((long)2, "festa delle ciule piene", 100, 2,
                 false, "evento tipico di Milanere, sono svariate le edizioni di questo evento che ricorre da più di 50 anni dove i protagonisti sono sempre stati: produttori locali, bande e scuole. Punto di forza? Le ciule ripiene e le frittelle di mele!!!!",
                 "non adatto a chi non gradisce i prodotti piemontesi, neh?!", null, null, 2, 2));
+        */
         return list;
     }
 }

@@ -10,6 +10,7 @@ import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.ArraySet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,6 +74,7 @@ public class DialogCreaEvento extends Dialog {
         super(context);
         this.evento = evento;
         modifica = true;
+        Log.d(TAG, "DialogCreaEvento: creato con evento -> modifica = " + modifica);
     }
 
     public DialogCreaEvento(@NonNull Context context, int themeResId) {
@@ -120,11 +122,17 @@ public class DialogCreaEvento extends Dialog {
         progressDialog.show();
         //chiamata al server che mi fa ottenere l'elenco dei tipi di evento
         Call<List<TipoEvento>> call = RetrofitTipoEventoClient.getInstance(getContext()).getMyAPI().ottieniListaTipiEvento();
+        Log.d(TAG, "richiesta lista tipi evento: " + call.request());
         call.enqueue(new Callback<List<TipoEvento>>() {
             @Override
             public void onResponse(Call<List<TipoEvento>> call, Response<List<TipoEvento>> response) {
                 //aggiorno l'elenco di tipi dello spinner
-                spinnerAdapter.aggiorna(response.body());
+                List<TipoEvento> tipiEventi = new ArrayList<>();
+                if(response.body() != null){
+                    tipiEventi = response.body();
+                }
+                Toast.makeText(getContext(), "Lista tipi size: " + tipiEventi.size() , Toast.LENGTH_LONG).show();
+                spinnerAdapter.aggiorna(tipiEventi);
                 progressDialog.dismiss();
                 if(evento != null){
                     //settare il valore di default dello spinner
@@ -210,15 +218,28 @@ public class DialogCreaEvento extends Dialog {
 
                 Log.d(TAG, "utenteID = " + utenteID + "; comuneID = " + comuneID);
 
-                Evento nuovoEvento = new Evento(null, nomeInput.getText().toString(),
+                /*Evento nuovoEvento = new Evento(null, nomeInput.getText().toString(),
                         Integer.parseInt(maxPersoneInput.getText().toString()), 0, streamingBox.isChecked(),
                         descrizioneInput.getText().toString(), notaInput.getText().toString(),
-                        (TipoEvento) tipoEventoInput.getSelectedItem(), dateUtil, utenteID, comuneID);
+                        (TipoEvento) tipoEventoInput.getSelectedItem(), dateUtil, utenteID, comuneID);*/
+                //tipoEventoSelezionato = (TipoEvento) tipoEventoInput.getSelectedItem();
+                TipoEvento tipoEvento = (TipoEvento) tipoEventoInput.getSelectedItem();
+                //tipoEvento.setId(null);
+                Evento nuovoEvento = new Evento(nomeInput.getText().toString(), Integer.parseInt(maxPersoneInput.getText().toString()), 0, streaming,
+                        descrizioneInput.getText().toString(), notaInput.getText().toString(), tipoEvento, dateUtil,
+                        (shpr.getLong("utente_id", 0)),
+                        (shpr.getLong("comune_id", 0)), "",
+                        new ArraySet<Long>(), 0.0, 0.0, 0.0);
                 Log.d(TAG, "onClick: evento creato: " + nuovoEvento.toString());
+                Log.d(TAG, "onClick: evento creato: " + new Gson().toJson(nuovoEvento));
 
                 if(modifica){
                     //nel caso in cui il dialog serva per modificare un evento bisogna fare una certa chiamata al server
-                    Call<Evento> call = RetrofitEventClient.getInstance(getContext()).getMyAPI().modificaEvento(evento.getId(), nuovoEvento);
+                    Log.d(TAG, "onClick: modifica = " + modifica);
+                    Call<Evento> call = RetrofitEventClient
+                            .getInstance(getContext())
+                            .getMyAPI()
+                            .modificaEvento(evento.getId(), nuovoEvento, "Bearer " + shpr.getString("token", ""));
                     call.enqueue(new Callback<Evento>() {
                         @Override
                         public void onResponse(Call<Evento> call, Response<Evento> response) {
@@ -238,12 +259,20 @@ public class DialogCreaEvento extends Dialog {
 
                         }
                     });
+
                 }else{
                     //nel caso in cui il dialog serva per creare un nuovo evento
-                    Call<Evento> call = RetrofitEventClient.getInstance(getContext()).getMyAPI().creaNuovoEvento(nuovoEvento);
+                    Call<Evento> call = RetrofitEventClient
+                            .getInstance(getContext())
+                            .getMyAPI()
+                            .creaNuovoEvento(nuovoEvento, "Bearer " + shpr.getString("token", ""));
+
+                    Log.d(TAG, "invio richiesta: body: " + new Gson().toJson(call.request().body()));
                     call.enqueue(new Callback<Evento>() {
                         @Override
                         public void onResponse(Call<Evento> call, Response<Evento> response) {
+                            Log.d(TAG, "invio richiesta: body: " + new Gson().toJson(call.request().body()));
+
                             if(response.isSuccessful()){
                                 Toast.makeText(getContext(), "Nuovo evento creato: " + response.body().getId(), Toast.LENGTH_LONG).show();
                                 Log.d(TAG, "onResponse; evento creato: " + response.body().toString());

@@ -17,7 +17,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Non sei iscritto ad alcun evento"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:layout_weight="2"
+            android:textSize="20dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"

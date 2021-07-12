@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.Gson;
 
 import java.util.Date;
+import java.util.Set;
 
 public class Evento {
     private Long id;
@@ -19,11 +20,16 @@ public class Evento {
     private Date data;
     private long proprietario;
     private long comune;
+    private String indirizzo;
+    private Set<Long> iscritti;
+    private double prezzo;
+    private double latitudine;
+    private double longitudine;
 
-    public Evento(Long id, String nome, int numMaxPartecipanti, int partecipanti, boolean streaming,
-                  String descrizione, String note, TipoEvento tipoEvento, Date data, long proprietario,
-                  long comune) {
-        this.id = id;
+    public Evento(String nome, int numMaxPartecipanti, int partecipanti, boolean streaming,
+                  String descrizione, String note, TipoEvento tipoEvento, Date data,
+                  long proprietario, long comune, String indirizzo, Set<Long> iscritti,
+                  double prezzo, double latitudine, double longitudine) {
         this.nome = nome;
         this.numMaxPartecipanti = numMaxPartecipanti;
         this.partecipanti = partecipanti;
@@ -34,25 +40,12 @@ public class Evento {
         this.data = data;
         this.proprietario = proprietario;
         this.comune = comune;
+        this.indirizzo = indirizzo;
+        this.iscritti = iscritti;
+        this.prezzo = prezzo;
+        this.latitudine = latitudine;
+        this.longitudine = longitudine;
     }
-
-    protected Evento(Parcel in) {
-        if (in.readByte() == 0) {
-            id = null;
-        } else {
-            id = in.readLong();
-        }
-        nome = in.readString();
-        numMaxPartecipanti = in.readInt();
-        partecipanti = in.readInt();
-        streaming = in.readByte() != 0;
-        descrizione = in.readString();
-        note = in.readString();
-        proprietario = in.readLong();
-        comune = in.readLong();
-    }
-
-
 
     public Long getId() {
         return id;
@@ -142,7 +135,43 @@ public class Evento {
         this.comune = comune;
     }
 
-    public String toString(){
-        return new Gson().toJson(this);
+    public String getIndirizzo() {
+        return indirizzo;
+    }
+
+    public void setIndirizzo(String indirizzo) {
+        this.indirizzo = indirizzo;
+    }
+
+    public Set<Long> getIscritti() {
+        return iscritti;
+    }
+
+    public void setIscritti(Set<Long> iscritti) {
+        this.iscritti = iscritti;
+    }
+
+    public double getPrezzo() {
+        return prezzo;
+    }
+
+    public void setPrezzo(double prezzo) {
+        this.prezzo = prezzo;
+    }
+
+    public double getLatitudine() {
+        return latitudine;
+    }
+
+    public void setLatitudine(double latitudine) {
+        this.latitudine = latitudine;
+    }
+
+    public double getLongitudine() {
+        return longitudine;
+    }
+
+    public void setLongitudine(double longitudine) {
+        this.longitudine = longitudine;
     }
 }

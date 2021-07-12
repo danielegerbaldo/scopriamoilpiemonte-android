@@ -1,5 +1,8 @@
 package com.example.guitaass.DOM;
 
+import java.util.List;
+import java.util.Set;
+
 public class Utente {
     private Long id;
 
@@ -11,18 +14,26 @@ public class Utente {
 
     private String telefono;
 
-    private long comuneResidenza;
+    private long comuneResidenza;   //comune di residenza
 
     private String email;
 
     private String password;
 
-    private String ruolo;
+    List<Role> ruoli;
 
-    private long comune;
+    Set<Long> iscrizioni;
 
-    public Utente(String nome, String cognome, String cf, String telefono, long comuneResidenza, String email,
-                  String password, String ruolo, long comune) {
+    //private Provider provider;
+
+    //@DefaultValue(value = null)
+    private long dipendenteDiComune;    //comune del quale sono sindaco o pubblicatore
+
+    private String pictureUrl;
+
+    private boolean emailVerified;
+
+    public Utente(String nome, String cognome, String cf, String telefono, long comuneResidenza, String email, String password, List<Role> ruoli, Set<Long> iscrizioni, long dipendenteDiComune, String pictureUrl, boolean emailVerified) {
         this.nome = nome;
         this.cognome = cognome;
         this.cf = cf;
@@ -30,8 +41,11 @@ public class Utente {
         this.comuneResidenza = comuneResidenza;
         this.email = email;
         this.password = password;
-        this.ruolo = ruolo;
-        this.comune = comune;
+        this.ruoli = ruoli;
+        this.iscrizioni = iscrizioni;
+        this.dipendenteDiComune = dipendenteDiComune;
+        this.pictureUrl = pictureUrl;
+        this.emailVerified = emailVerified;
     }
 
     public Long getId() {
@@ -98,19 +112,43 @@ public class Utente {
         this.password = password;
     }
 
-    public String getRuolo() {
-        return ruolo;
+    public List<Role> getRuoli() {
+        return ruoli;
     }
 
-    public void setRuolo(String ruolo) {
-        this.ruolo = ruolo;
+    public void setRuoli(List<Role> ruoli) {
+        this.ruoli = ruoli;
     }
 
-    public long getComune() {
-        return comune;
+    public Set<Long> getIscrizioni() {
+        return iscrizioni;
     }
 
-    public void setComune(long comune) {
-        this.comune = comune;
+    public void setIscrizioni(Set<Long> iscrizioni) {
+        this.iscrizioni = iscrizioni;
+    }
+
+    public long getDipendenteDiComune() {
+        return dipendenteDiComune;
+    }
+
+    public void setDipendenteDiComune(long dipendenteDiComune) {
+        this.dipendenteDiComune = dipendenteDiComune;
+    }
+
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
+
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
     }
 }

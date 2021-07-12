@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.example.guitaass.retrofit.RetrofitClient;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -22,7 +21,7 @@ public class RetrofitEventClient {
         String ip = shpr.getString("IP", "localhost");
 
 
-        String BASE_URL = "http://" + ip + ":8080/api/v1/evento/";
+        String BASE_URL = "http://" + ip + "/api/v1/evento/";
         //Serve per forzare che la data dell'evento abbia formato corretto
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd")
